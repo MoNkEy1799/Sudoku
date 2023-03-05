@@ -4,6 +4,23 @@
 #include <array>
 #include <string>
 
+int backtrackCount = 0;
+
+void printGrid(SUDOKU_GRID& grid)
+{
+	for (int i = 0; i < 9; i++)
+	{
+		for (int j = 0; j < 9; j++)
+		{
+			std::cout << grid[i][j] << "  ";
+		}
+
+		std::cout << std::endl;
+	}
+
+	std::cout << "\n" << "- - - - - - - - - - - - -" << "\n" << std::endl;
+}
+
 SudokuSolver::SudokuSolver()
 	: m_solutionCounter(0)
 {
@@ -13,28 +30,26 @@ SudokuSolver::~SudokuSolver()
 {
 }
 
-void SudokuSolver::solveAndPrint(SUDOKU_GRID& grid)
+void SudokuSolver::solveAndPrint(SUDOKU_GRID grid)
 {
 	if (solveSudoku(grid))
 	{
-		printSolution(grid);
+		printGrid(grid);
 	}
 }
 
-int SudokuSolver::solve(SUDOKU_GRID& grid, bool count)
+void SudokuSolver::solve(SUDOKU_GRID& grid)
 {
-	if (count)
-	{
-		m_solutionCounter = 0;
-		solveSudoku(grid, true);
-		return m_solutionCounter;
-	}
+	backtrackCount = 0;
+	solveSudoku(grid);
+}
 
-	else
-	{
-		solveSudoku(grid);
-		return 1;
-	}
+int SudokuSolver::countSolutions(SUDOKU_GRID grid)
+{
+	backtrackCount = 0;
+	m_solutionCounter = 0;
+	solveSudoku(grid);
+	return m_solutionCounter;
 }
 
 bool SudokuSolver::findEmptyLocation(SUDOKU_GRID& grid, int& row, int& col)
@@ -106,14 +121,20 @@ bool SudokuSolver::isLocationValid(SUDOKU_GRID& grid, int row, int col, int num)
 	return (!rowSafe and !colSafe and !boxSafe);
 }
 
-bool SudokuSolver::solveSudoku(SUDOKU_GRID& grid, bool countSoltuions)
+bool SudokuSolver::solveSudoku(SUDOKU_GRID& grid)
 {
+	backtrackCount++;
+	if (m_solutionCounter > 1)
+	{
+		return true;
+	}
+
 	int row, col;
 
 	if (!findEmptyLocation(grid, row, col))
 	{
 		m_solutionCounter++;
-		return false;
+		return true;
 	}
 
 	for (int num = 1; num < 10; num++)
@@ -132,19 +153,4 @@ bool SudokuSolver::solveSudoku(SUDOKU_GRID& grid, bool countSoltuions)
 	}
 
 	return false;
-}
-
-void SudokuSolver::printSolution(SUDOKU_GRID& grid)
-{
-	for (int i = 0; i < 9; i++)
-	{
-		for (int j = 0; j < 9; j++)
-		{
-			std::cout << grid[i][j] << "  ";
-		}
-
-		std::cout << std::endl;
-	}
-
-	std::cout << "\n" << "- - - - - - - - - - - - -" << "\n" << std::endl;
 }

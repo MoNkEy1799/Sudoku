@@ -1,27 +1,37 @@
-#include <iostream>
-#include <array>
-
 #include "SudokuSolver.h"
 #include "SudokuGenerator.h"
 
-int main()
+#include <iostream>
+#include <array>
+#include <chrono>
+#include <thread>
+
+void createGrid()
 {
 	SUDOKU_GRID grid;
 	SudokuGenerator generator;
-	SudokuSolver solver;
 
-	grid = {
-		2, 9, 5, 7, 4, 3, 8, 6, 1,
-		4, 3, 1, 8, 6, 5, 9, 0, 0,
-		8, 7, 6, 1, 9, 2, 5, 4, 3,
-		3, 8, 7, 4, 5, 9, 2, 1, 6,
-		6, 1, 2, 3, 8, 7, 4, 9, 5,
-		5, 4, 9, 2, 1, 6, 7, 3, 8,
-		7, 6, 3, 5, 3, 4, 1, 8, 9,
-		9, 2, 8, 6, 7, 1, 3, 5, 4,
-		1, 5, 4, 9, 3, 8, 6, 0, 0 };
+	Difficulty diff = generator.generateRandomUniqueGrid(grid);
+	printGrid(grid);
+	std::cout << (int)diff << std::endl;
+}
 
-	std::cout << solver.solve(grid, true) << std::endl;
+int main()
+{
+	while (true)
+	{
+		SUDOKU_GRID grid;
+		SudokuGenerator gen;
 
-	//generator.generateRandomUniqueGrid(grid);
+		int tries = 0;
+
+		while (gen.generateRandomUniqueGrid(grid) != Difficulty::HARD)
+		{
+			tries++;
+		}
+
+		std::cout << tries << std::endl;
+
+		//std::this_thread::sleep_for(std::chrono::seconds(1));
+	}
 }

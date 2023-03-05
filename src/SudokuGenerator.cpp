@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <array>
 #include <numeric>
+#include <iostream>
 
 SudokuGenerator::SudokuGenerator()
 {
@@ -14,11 +15,36 @@ SudokuGenerator::~SudokuGenerator()
 {
 }
 
-void SudokuGenerator::generateRandomUniqueGrid(SUDOKU_GRID& grid)
+Difficulty SudokuGenerator::generateRandomUniqueGrid(SUDOKU_GRID& grid)
 {
 	makeEmptyGrid(grid);
-	fillRandomBlocks(grid);
-	makeUniqueGrid(grid);
+	makeRandomGrid(grid);
+	removePositionsFromGrid(grid);
+
+	int counter = 0;
+
+	for (int i = 0; i < 81; i++)
+	{
+		if (grid[i / 9][i % 9] == 0)
+		{
+			counter++;
+		}
+	}
+
+	if (counter <= 22)
+	{
+		return Difficulty::EASY;
+	}
+
+	else if (counter <= 43)
+	{
+		return Difficulty::MEDIUM;
+	}
+
+	else
+	{
+		return Difficulty::HARD;
+	}
 }
 
 void SudokuGenerator::makeEmptyGrid(SUDOKU_GRID& grid)
@@ -32,7 +58,7 @@ void SudokuGenerator::makeEmptyGrid(SUDOKU_GRID& grid)
 	}
 }
 
-void SudokuGenerator::fillRandomBlocks(SUDOKU_GRID& grid)
+void SudokuGenerator::makeRandomGrid(SUDOKU_GRID& grid)
 {
 	std::array<std::array<int, 9>, 3> numBlocks;
 	Random random;
@@ -53,13 +79,29 @@ void SudokuGenerator::fillRandomBlocks(SUDOKU_GRID& grid)
 			grid[i + 6][j + 6] = numBlocks[2][index];
 		}
 	}
+
+	SudokuSolver solver;
+	solver.solve(grid);
 }
 
-void SudokuGenerator::makeUniqueGrid(SUDOKU_GRID& grid)
+void SudokuGenerator::removePositionsFromGrid(SUDOKU_GRID& grid)
 {
+	Random random;
 	SudokuSolver solver;
 
-	//solver.solve(grid);
+	std::array<int, 81> positions;
+	std::iota(positions.begin(), positions.end(), 0);
+	std::shuffle(positions.begin(), positions.end(), random.getEngine());
 
-	solver.solveAndPrint(grid);
+	for (int pos : positions)
+	{
+		int previous = grid[pos / 9][pos % 9];
+		grid[pos / 9][pos % 9] = 0;
+
+		if (solver.countSolutions(grid) > 1)
+		{
+			grid[pos / 9][pos % 9] = previous;
+			break;
+		}
+	}
 }

@@ -4,14 +4,17 @@
 
 typedef std::array<std::array<int, 9>, 9> SUDOKU_GRID;
 
+void printGrid(SUDOKU_GRID& grid);
+
 class SudokuSolver
 {
 public:
 	SudokuSolver();
 	~SudokuSolver();
 
-	void solveAndPrint(SUDOKU_GRID& grid);
-	int solve(SUDOKU_GRID& grid, bool count = false);
+	void solveAndPrint(SUDOKU_GRID grid);
+	void solve(SUDOKU_GRID& grid);
+	int countSolutions(SUDOKU_GRID grid);
 
 private:
 	int m_solutionCounter;
@@ -21,7 +24,5 @@ private:
 	bool usedInCol(SUDOKU_GRID& grid, int col, int num);
 	bool usedInBox(SUDOKU_GRID& grid, int row, int col, int num);
 	bool isLocationValid(SUDOKU_GRID& grid, int row, int col, int num);
-	bool solveSudoku(SUDOKU_GRID& grid, bool countSolutions = false);
-
-	void printSolution(SUDOKU_GRID& grid);
+	bool solveSudoku(SUDOKU_GRID& grid);
 };

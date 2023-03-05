@@ -15,24 +15,24 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Main.cpp">
+    <ClCompile Include="src\Main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SudokuSolver.cpp">
+    <ClCompile Include="src\SudokuSolver.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SudokuGenerator.cpp">
+    <ClCompile Include="src\SudokuGenerator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="SudokuSolver.h">
+    <ClInclude Include="src\SudokuSolver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Random.h">
+    <ClInclude Include="src\Random.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SudokuGenerator.h">
+    <ClInclude Include="src\SudokuGenerator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
