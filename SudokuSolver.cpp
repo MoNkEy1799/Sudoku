@@ -4,8 +4,8 @@
 #include <array>
 #include <string>
 
-SudokuSolver::SudokuSolver(SUDOKU_GRID grid)
-	: m_grid(grid), m_curRow(0), m_curCol(0)
+SudokuSolver::SudokuSolver()
+	: m_solutionCounter(0)
 {
 }
 
@@ -13,21 +13,37 @@ SudokuSolver::~SudokuSolver()
 {
 }
 
-void SudokuSolver::solve()
+void SudokuSolver::solveAndPrint(SUDOKU_GRID& grid)
 {
-	if (solveSudoku())
+	if (solveSudoku(grid))
 	{
-		printSolution();
+		printSolution(grid);
 	}
 }
 
-bool SudokuSolver::findEmptyLocation(int& row, int& col)
+int SudokuSolver::solve(SUDOKU_GRID& grid, bool count)
+{
+	if (count)
+	{
+		m_solutionCounter = 0;
+		solveSudoku(grid, true);
+		return m_solutionCounter;
+	}
+
+	else
+	{
+		solveSudoku(grid);
+		return 1;
+	}
+}
+
+bool SudokuSolver::findEmptyLocation(SUDOKU_GRID& grid, int& row, int& col)
 {
 	for (int i = 0; i < 9; i++)
 	{
 		for (int j = 0; j < 9; j++)
 		{
-			if (m_grid[i][j] == 0)
+			if (grid[i][j] == 0)
 			{
 				row = i;
 				col = j;
@@ -39,11 +55,11 @@ bool SudokuSolver::findEmptyLocation(int& row, int& col)
 	return false;
 }
 
-bool SudokuSolver::usedInRow(int row, int num)
+bool SudokuSolver::usedInRow(SUDOKU_GRID& grid, int row, int num)
 {
 	for (int i = 0; i < 9; i++)
 	{
-		if (m_grid[row][i] == num)
+		if (grid[row][i] == num)
 		{
 			return true;
 		}
@@ -52,11 +68,11 @@ bool SudokuSolver::usedInRow(int row, int num)
 	return false;
 }
 
-bool SudokuSolver::usedInCol(int col, int num)
+bool SudokuSolver::usedInCol(SUDOKU_GRID& grid, int col, int num)
 {
 	for (int i = 0; i < 9; i++)
 	{
-		if (m_grid[i][col] == num)
+		if (grid[i][col] == num)
 		{
 			return true;
 		}
@@ -65,13 +81,13 @@ bool SudokuSolver::usedInCol(int col, int num)
 	return false;
 }
 
-bool SudokuSolver::usedInBox(int row, int col, int num)
+bool SudokuSolver::usedInBox(SUDOKU_GRID& grid, int row, int col, int num)
 {
 	for (int i = 0; i < 3; i++)
 	{
 		for (int j = 0; j < 3; j++)
 		{
-			if (m_grid[i + row * 3][j + col * 3] == num)
+			if (grid[i + row * 3][j + col * 3] == num)
 			{
 				return true;
 			}
@@ -81,49 +97,50 @@ bool SudokuSolver::usedInBox(int row, int col, int num)
 	return false;
 }
 
-bool SudokuSolver::isLocationValid(int row, int col, int num)
+bool SudokuSolver::isLocationValid(SUDOKU_GRID& grid, int row, int col, int num)
 {
-	bool rowSafe = usedInRow(row, num);
-	bool colSafe = usedInCol(col, num);
-	bool boxSafe = usedInBox(row / 3, col / 3, num);
+	bool rowSafe = usedInRow(grid, row, num);
+	bool colSafe = usedInCol(grid, col, num);
+	bool boxSafe = usedInBox(grid, row / 3, col / 3, num);
 
 	return (!rowSafe and !colSafe and !boxSafe);
 }
 
-bool SudokuSolver::solveSudoku()
+bool SudokuSolver::solveSudoku(SUDOKU_GRID& grid, bool countSoltuions)
 {
 	int row, col;
 
-	if (!findEmptyLocation(row, col))
+	if (!findEmptyLocation(grid, row, col))
 	{
-		return true;
+		m_solutionCounter++;
+		return false;
 	}
 
 	for (int num = 1; num < 10; num++)
 	{
-		if (isLocationValid(row, col, num))
+		if (isLocationValid(grid, row, col, num))
 		{
-			m_grid[row][col] = num;
+			grid[row][col] = num;
 
-			if (solveSudoku())
+			if (solveSudoku(grid))
 			{
 				return true;
 			}
 
-			m_grid[row][col] = 0;
+			grid[row][col] = 0;
 		}
 	}
 
 	return false;
 }
 
-void SudokuSolver::printSolution()
+void SudokuSolver::printSolution(SUDOKU_GRID& grid)
 {
 	for (int i = 0; i < 9; i++)
 	{
 		for (int j = 0; j < 9; j++)
 		{
-			std::cout << m_grid[i][j] << "  ";
+			std::cout << grid[i][j] << "  ";
 		}
 
 		std::cout << std::endl;

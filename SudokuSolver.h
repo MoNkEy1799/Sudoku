@@ -7,21 +7,21 @@ typedef std::array<std::array<int, 9>, 9> SUDOKU_GRID;
 class SudokuSolver
 {
 public:
-	SudokuSolver(SUDOKU_GRID grid);
+	SudokuSolver();
 	~SudokuSolver();
 
-	void solve();
+	void solveAndPrint(SUDOKU_GRID& grid);
+	int solve(SUDOKU_GRID& grid, bool count = false);
 
 private:
-	SUDOKU_GRID m_grid;
-	int m_curRow, m_curCol;
+	int m_solutionCounter;
 
-	bool findEmptyLocation(int& row, int& col);
-	bool usedInRow(int row, int num);
-	bool usedInCol(int col, int num);
-	bool usedInBox(int row, int col, int num);
-	bool isLocationValid(int row, int col, int num);
-	bool solveSudoku();
+	bool findEmptyLocation(SUDOKU_GRID& grid, int& row, int& col);
+	bool usedInRow(SUDOKU_GRID& grid, int row, int num);
+	bool usedInCol(SUDOKU_GRID& grid, int col, int num);
+	bool usedInBox(SUDOKU_GRID& grid, int row, int col, int num);
+	bool isLocationValid(SUDOKU_GRID& grid, int row, int col, int num);
+	bool solveSudoku(SUDOKU_GRID& grid, bool countSolutions = false);
 
-	void printSolution();
+	void printSolution(SUDOKU_GRID& grid);
 };
