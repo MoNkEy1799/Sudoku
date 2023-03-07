@@ -12,17 +12,17 @@ public:
 	SudokuSolver();
 	~SudokuSolver();
 
-	void solveAndPrint(SUDOKU_GRID grid);
-	void solve(SUDOKU_GRID& grid);
-	int countSolutions(SUDOKU_GRID grid);
+	void solveAndPrint(SUDOKU_GRID grid, bool& success);
+	void solve(SUDOKU_GRID& grid, bool& success);
+	int countSolutions(SUDOKU_GRID grid, bool& success);
 
 private:
-	int m_solutionCounter;
+	int m_solutionCounter, m_backtrackCounter;
 
 	bool findEmptyLocation(SUDOKU_GRID& grid, int& row, int& col);
 	bool usedInRow(SUDOKU_GRID& grid, int row, int num);
 	bool usedInCol(SUDOKU_GRID& grid, int col, int num);
 	bool usedInBox(SUDOKU_GRID& grid, int row, int col, int num);
 	bool isLocationValid(SUDOKU_GRID& grid, int row, int col, int num);
-	bool solveSudoku(SUDOKU_GRID& grid);
+	bool solveSudoku(SUDOKU_GRID& grid, bool& success);
 };

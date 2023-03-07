@@ -14,10 +14,10 @@ public:
 	SudokuGenerator();
 	~SudokuGenerator();
 
-	Difficulty generateRandomUniqueGrid(SUDOKU_GRID& grid);
+	Difficulty generateRandomUniqueGrid(SUDOKU_GRID& grid, bool& success);
 
 private:
 	void makeEmptyGrid(SUDOKU_GRID& grid);
-	void makeRandomGrid(SUDOKU_GRID& grid);
-	void removePositionsFromGrid(SUDOKU_GRID& grid);
+	void makeRandomGrid(SUDOKU_GRID& grid, bool& success);
+	void removePositionsFromGrid(SUDOKU_GRID& grid, bool& success);
 };

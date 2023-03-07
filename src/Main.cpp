@@ -6,32 +6,27 @@
 #include <chrono>
 #include <thread>
 
-void createGrid()
-{
-	SUDOKU_GRID grid;
-	SudokuGenerator generator;
-
-	Difficulty diff = generator.generateRandomUniqueGrid(grid);
-	printGrid(grid);
-	std::cout << (int)diff << std::endl;
-}
 
 int main()
 {
 	while (true)
 	{
+		bool suc = true;
+
+		int succCounter = 0;
+
 		SUDOKU_GRID grid;
 		SudokuGenerator gen;
 
-		int tries = 0;
+		Difficulty diff = gen.generateRandomUniqueGrid(grid, suc);
 
-		while (gen.generateRandomUniqueGrid(grid) != Difficulty::HARD)
+		if (suc)
 		{
-			tries++;
+			succCounter++;
 		}
 
-		std::cout << tries << std::endl;
+		std::cout << succCounter << std::endl;
 
-		//std::this_thread::sleep_for(std::chrono::seconds(1));
+		std::this_thread::sleep_for(std::chrono::milliseconds(10));
 	}
 }

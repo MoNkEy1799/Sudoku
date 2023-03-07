@@ -4,8 +4,6 @@
 #include <array>
 #include <string>
 
-int backtrackCount = 0;
-
 void printGrid(SUDOKU_GRID& grid)
 {
 	for (int i = 0; i < 9; i++)
@@ -22,7 +20,7 @@ void printGrid(SUDOKU_GRID& grid)
 }
 
 SudokuSolver::SudokuSolver()
-	: m_solutionCounter(0)
+	: m_solutionCounter(0), m_backtrackCounter(0)
 {
 }
 
@@ -30,25 +28,27 @@ SudokuSolver::~SudokuSolver()
 {
 }
 
-void SudokuSolver::solveAndPrint(SUDOKU_GRID grid)
+void SudokuSolver::solveAndPrint(SUDOKU_GRID grid, bool& success)
 {
-	if (solveSudoku(grid))
+	m_backtrackCounter = 0;
+
+	if (solveSudoku(grid, success))
 	{
 		printGrid(grid);
 	}
 }
 
-void SudokuSolver::solve(SUDOKU_GRID& grid)
+void SudokuSolver::solve(SUDOKU_GRID& grid, bool& success)
 {
-	backtrackCount = 0;
-	solveSudoku(grid);
+	m_backtrackCounter = 0;
+	solveSudoku(grid, success);
 }
 
-int SudokuSolver::countSolutions(SUDOKU_GRID grid)
+int SudokuSolver::countSolutions(SUDOKU_GRID grid, bool& success)
 {
-	backtrackCount = 0;
+	m_backtrackCounter = 0;
 	m_solutionCounter = 0;
-	solveSudoku(grid);
+	solveSudoku(grid, success);
 	return m_solutionCounter;
 }
 
@@ -121,9 +121,16 @@ bool SudokuSolver::isLocationValid(SUDOKU_GRID& grid, int row, int col, int num)
 	return (!rowSafe and !colSafe and !boxSafe);
 }
 
-bool SudokuSolver::solveSudoku(SUDOKU_GRID& grid)
+bool SudokuSolver::solveSudoku(SUDOKU_GRID& grid, bool& success)
 {
-	backtrackCount++;
+	m_backtrackCounter++;
+
+	if (m_backtrackCounter > 10000)
+	{
+		success = false;
+		return true;
+	}
+
 	if (m_solutionCounter > 1)
 	{
 		return true;
@@ -134,7 +141,7 @@ bool SudokuSolver::solveSudoku(SUDOKU_GRID& grid)
 	if (!findEmptyLocation(grid, row, col))
 	{
 		m_solutionCounter++;
-		return true;
+		return false;
 	}
 
 	for (int num = 1; num < 10; num++)
@@ -143,7 +150,7 @@ bool SudokuSolver::solveSudoku(SUDOKU_GRID& grid)
 		{
 			grid[row][col] = num;
 
-			if (solveSudoku(grid))
+			if (solveSudoku(grid, success))
 			{
 				return true;
 			}
