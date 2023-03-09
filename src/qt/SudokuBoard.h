@@ -4,6 +4,8 @@
 #include <QGridLayout>
 
 #include <vector>
+#include <string>
+#include <memory>
 
 class Tile;
 

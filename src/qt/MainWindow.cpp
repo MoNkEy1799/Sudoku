@@ -1,13 +1,19 @@
 #include "MainWindow.h"
-#include "SudokuBoard.h"
+
+#include <QPushButton>
+#include <QWidget>
+#include <QGridLayout>
+#include <QLabel>
 
 MainWindow::MainWindow()
 	: QMainWindow()
 {
-	SudokuBoard* board = new SudokuBoard(this);
-	setCentralWidget(board);
-}
+	lay = new QGridLayout(this);
+	QLabel* lab = new QLabel("test");
+	lay->addWidget(lab);
 
-MainWindow::~MainWindow()
-{
+	wid = new QWidget(this);
+	wid->setLayout(lay);
+
+	setCentralWidget(wid);
 }

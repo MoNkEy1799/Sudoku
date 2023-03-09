@@ -3,10 +3,10 @@
 
 #include <QPushButton>
 
-Tile::Tile(SudokuBoard* board, QWidget* parent)
-	: QPushButton(parent), m_board(board)
+Tile::Tile(QWidget* parent)
+	: QPushButton(parent)
 {
-	setMouseTracking(true);
+	setFixedSize(30, 30);
 }
 
 Tile::~Tile()
