@@ -8,6 +8,4 @@ class MainWindow : public QMainWindow
 {
 public:
 	MainWindow();
-	QWidget* wid;
-	QGridLayout* lay;
 };

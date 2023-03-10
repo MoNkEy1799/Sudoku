@@ -12,7 +12,6 @@ class SudokuGenerator
 {
 public:
 	SudokuGenerator();
-	~SudokuGenerator();
 
 	Difficulty generateRandomUniqueGrid(SUDOKU_GRID& grid, bool& success);
 

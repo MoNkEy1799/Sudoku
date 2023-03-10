@@ -1,22 +1,26 @@
 #pragma once
+#include "../sudoku/SudokuGenerator.h"
 
 #include <QWidget>
 #include <QGridLayout>
 
-#include <vector>
+#include <array>
 #include <string>
-#include <memory>
 
 class Tile;
 
 class SudokuBoard : public QWidget
 {
 public:
-	SudokuBoard(QWidget* parent = nullptr);
+	SudokuBoard(QWidget* parent = nullptr, const char* style = nullptr);
 	~SudokuBoard();
 
 private:
-	std::vector<std::unique_ptr<Tile>> m_tiles;
+	std::array<Tile*, 81> m_tiles;
+	QGridLayout* m_layout;
+	SudokuGenerator* m_generator;
+	Difficulty m_difficulty;
+	SUDOKU_GRID m_grid;
 
-	void createTiles();
+	void createTiles(const char* style);
 };

@@ -1,37 +1,49 @@
 #include "SudokuBoard.h"
 #include "Tile.h"
+#include "../sudoku/SudokuSolver.h"
 
 #include <QWidget>
 #include <QGridLayout>
 
-const char* mainStyleSheet =
-"QPushButton {background: #3d3d3d; color: #b5b5b5;}"
-"QPushButton::hover {background: #3d3d3d; color: #b5b5b5;}"
-"QWidget {background: #050505;}";
-
-SudokuBoard::SudokuBoard(QWidget* parent)
+SudokuBoard::SudokuBoard(QWidget* parent, const char* style)
 	: QWidget(parent)
 {
-	setFixedSize(270, 270);
-	setStyleSheet(mainStyleSheet);
-	createTiles();
+	setFixedSize(450, 450);
+	setContentsMargins(0, 0, 0, 0);
+	setStyleSheet(style);
+
+	m_layout = new QGridLayout(this);
+	m_layout->setSpacing(0);
+	setLayout(m_layout);
+
+	m_generator = new SudokuGenerator();
+	bool success = true;
+	m_difficulty = m_generator->generateRandomUniqueGrid(m_grid, success);
+
+	createTiles(style);
 }
 
 SudokuBoard::~SudokuBoard()
 {
-	m_tiles.clear();
+	delete m_generator;
 }
 
-void SudokuBoard::createTiles()
+void SudokuBoard::createTiles(const char* style)
 {
-	QGridLayout* layout = new QGridLayout(this);
-
 	for (int i = 0; i < 9; i++)
 	{
 		for (int j = 0; j < 9; j++)
 		{
-			std::unique_ptr<Tile> tile = std::make_unique<Tile>(this);
-			m_tiles.push_back(std::move(tile));
+			Tile* tile = new Tile(this, style);
+			m_layout->addWidget(tile, i, j);
+
+			if (m_grid[i][j])
+			{
+				tile->setNumber(m_grid[i][j]);
+			}
+
+			int index = i * 9 + j;
+			m_tiles[index] = tile;
 		}
 	}
 }

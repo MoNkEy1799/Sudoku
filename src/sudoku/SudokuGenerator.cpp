@@ -11,10 +11,6 @@ SudokuGenerator::SudokuGenerator()
 {
 }
 
-SudokuGenerator::~SudokuGenerator()
-{
-}
-
 Difficulty SudokuGenerator::generateRandomUniqueGrid(SUDOKU_GRID& grid, bool& success)
 {
 	makeEmptyGrid(grid);
