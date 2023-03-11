@@ -96,6 +96,7 @@
   <ItemGroup>
     <ClCompile Include="src\Main.cpp" />
     <ClCompile Include="src\qt\MainWindow.cpp" />
+    <ClCompile Include="src\qt\NumberWidget.cpp" />
     <ClCompile Include="src\qt\SudokuBoard.cpp" />
     <ClCompile Include="src\qt\Tile.cpp" />
     <ClCompile Include="src\sudoku\SudokuGenerator.cpp" />
@@ -103,6 +104,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\qt\MainWindow.h" />
+    <ClInclude Include="src\qt\NumberWidget.h" />
     <ClInclude Include="src\qt\SudokuBoard.h" />
     <ClInclude Include="src\qt\Tile.h" />
     <ClInclude Include="src\sudoku\Random.h" />
