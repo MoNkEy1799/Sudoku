@@ -10,8 +10,28 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\Main.cpp" />
+    <ClCompile Include="src\qt\MainWindow.cpp" />
+    <ClCompile Include="src\qt\NumberWidget.cpp" />
+    <ClCompile Include="src\qt\SudokuBoard.cpp" />
+    <ClCompile Include="src\qt\Tile.cpp" />
+    <ClCompile Include="src\qt\TimerWidget.cpp" />
+    <ClCompile Include="src\sudoku\SudokuGenerator.cpp" />
+    <ClCompile Include="src\sudoku\SudokuSolver.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\qt\MainWindow.h" />
+    <ClInclude Include="src\sudoku\Random.h" />
+    <ClInclude Include="src\sudoku\SudokuGenerator.h" />
+    <ClInclude Include="src\sudoku\SudokuSolver.h" />
+    <QtMoc Include="src\qt\TimerWidget.h" />
+    <QtMoc Include="src\qt\Tile.h" />
+    <QtMoc Include="src\qt\SudokuBoard.h" />
+    <QtMoc Include="src\qt\NumberWidget.h" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{2CF8455F-C58E-4347-9493-5B679DCDA22F}</ProjectGuid>
+    <ProjectGuid>{A8CAF95C-88CF-448E-BBAC-3186C0C1C801}</ProjectGuid>
     <Keyword>QtVS_v304</Keyword>
     <WindowsTargetPlatformVersion Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">10.0.22000.0</WindowsTargetPlatformVersion>
     <WindowsTargetPlatformVersion Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">10.0.22000.0</WindowsTargetPlatformVersion>
@@ -32,14 +52,12 @@
   </ImportGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="QtSettings">
     <QtInstall>6.4.2_msvc2019_64</QtInstall>
-    <QtModules>
-    </QtModules>
+    <QtModules>core;gui;widgets</QtModules>
     <QtBuildConfig>debug</QtBuildConfig>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'" Label="QtSettings">
     <QtInstall>6.4.2_msvc2019_64</QtInstall>
-    <QtModules>
-    </QtModules>
+    <QtModules>core;gui;widgets</QtModules>
     <QtBuildConfig>release</QtBuildConfig>
   </PropertyGroup>
   <Target Name="QtMsBuildNotFound" BeforeTargets="CustomBuild;ClCompile" Condition="!Exists('$(QtMsBuild)\qt.targets') or !Exists('$(QtMsBuild)\qt.props')">
@@ -60,15 +78,6 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
   </PropertyGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <ClCompile>
-      <AdditionalIncludeDirectories>$(QTDIR)\include\QtWidgets;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-    </ClCompile>
-    <Link>
-      <AdditionalLibraryDirectories>$(QTDIR)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>%(AdditionalDependencies);$(Qt_LIBS_);Qt6Widgets.lib</AdditionalDependencies>
-    </Link>
-  </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="Configuration">
     <ClCompile>
       <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
@@ -93,24 +102,6 @@
       <GenerateDebugInformation>false</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="src\Main.cpp" />
-    <ClCompile Include="src\qt\MainWindow.cpp" />
-    <ClCompile Include="src\qt\NumberWidget.cpp" />
-    <ClCompile Include="src\qt\SudokuBoard.cpp" />
-    <ClCompile Include="src\qt\Tile.cpp" />
-    <ClCompile Include="src\sudoku\SudokuGenerator.cpp" />
-    <ClCompile Include="src\sudoku\SudokuSolver.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="src\qt\MainWindow.h" />
-    <ClInclude Include="src\qt\NumberWidget.h" />
-    <ClInclude Include="src\qt\SudokuBoard.h" />
-    <ClInclude Include="src\qt\Tile.h" />
-    <ClInclude Include="src\sudoku\Random.h" />
-    <ClInclude Include="src\sudoku\SudokuGenerator.h" />
-    <ClInclude Include="src\sudoku\SudokuSolver.h" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">
     <Import Project="$(QtMsBuild)\qt.targets" />

@@ -7,11 +7,10 @@
 
 #include <string>
 
-NumberWidget::NumberWidget(QWidget* parent, const char* style)
+NumberWidget::NumberWidget(QWidget* parent)
 	: QWidget(parent), m_numbers()
 {
 	m_layout = new QGridLayout(this);
-	setStyleSheet(style);
 	setMinimumHeight(150);
 
 	QFont font = QFont("Sans-Serif", 16);
@@ -21,7 +20,6 @@ NumberWidget::NumberWidget(QWidget* parent, const char* style)
 	{
 		QPushButton* button = new QPushButton(std::to_string(i + 1).c_str(), this);
 		m_numbers[i] = button;
-		button->setStyleSheet(style);
 		button->setFont(font);
 		button->setFixedSize(50, 50);
 		button->setObjectName("Number");

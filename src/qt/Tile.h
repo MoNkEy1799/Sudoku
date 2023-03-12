@@ -10,8 +10,11 @@ class SudokuBoard;
 
 class Tile : public QWidget
 {
+
+	Q_OBJECT
+
 public:
-	Tile(SudokuBoard* board = nullptr, QWidget* parent = nullptr, const char* = nullptr);
+	Tile(SudokuBoard* board = nullptr, QWidget* parent = nullptr);
 
 	void addGuess(int guess);
 	void setNumber(int number);

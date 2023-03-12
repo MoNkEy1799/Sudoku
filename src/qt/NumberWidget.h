@@ -8,8 +8,11 @@
 
 class NumberWidget : public QWidget
 {
+
+	Q_OBJECT
+
 public:
-	NumberWidget(QWidget* parent = nullptr, const char* style = nullptr);
+	NumberWidget(QWidget* parent = nullptr);
 
 private:
 	std::array<QPushButton*, 9> m_numbers;

@@ -23,10 +23,10 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Main.cpp">
+    <ClCompile Include="src\qt\MainWindow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\qt\MainWindow.cpp">
+    <ClCompile Include="src\qt\NumberWidget.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\qt\SudokuBoard.cpp">
@@ -35,24 +35,21 @@
     <ClCompile Include="src\qt\Tile.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\qt\TimerWidget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="src\sudoku\SudokuGenerator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\sudoku\SudokuSolver.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\qt\NumberWidget.cpp">
+    <ClCompile Include="src\Main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\qt\MainWindow.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\qt\SudokuBoard.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="src\qt\Tile.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\sudoku\Random.h">
@@ -64,8 +61,19 @@
     <ClInclude Include="src\sudoku\SudokuSolver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\qt\NumberWidget.h">
+  </ItemGroup>
+  <ItemGroup>
+    <QtMoc Include="src\qt\NumberWidget.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
+    </QtMoc>
+    <QtMoc Include="src\qt\SudokuBoard.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="src\qt\Tile.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="src\qt\TimerWidget.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
   </ItemGroup>
 </Project>
