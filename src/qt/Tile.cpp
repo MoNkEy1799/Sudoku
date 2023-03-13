@@ -4,7 +4,6 @@
 #include <QPushButton>
 #include <QBoxLayout>
 #include <QFont>
-#include <QMouseEvent>
 
 #include <string>
 
@@ -33,4 +32,9 @@ void Tile::setNumber(int number)
 {
 	m_inner->setText(std::to_string(number).c_str());
 	m_inner->setObjectName("TileSet");
+}
+
+void Tile::mouseReleaseEvent(QMouseEvent* event)
+{
+	qDebug() << event;
 }

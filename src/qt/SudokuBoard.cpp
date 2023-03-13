@@ -43,6 +43,7 @@ void SudokuBoard::createTiles()
 			if (m_grid[i][j])
 			{
 				tile->setNumber(m_grid[i][j]);
+				tile->installEventFilter(this);
 			}
 
 			int index = i * 9 + j;

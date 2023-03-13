@@ -2,7 +2,6 @@
 
 #include <QWidget>
 #include <QPushButton>
-#include <QMouseEvent>
 
 #include <string>
 
@@ -18,6 +17,10 @@ public:
 
 	void addGuess(int guess);
 	void setNumber(int number);
+
+	void colorUp() { setStyleSheet("background : yellow"); };
+
+	void mouseReleaseEvent(QMouseEvent* event) override;
 
 private:
 	std::vector<int> m_guess;

@@ -2,12 +2,17 @@
 #include "SudokuBoard.h"
 #include "NumberWidget.h"
 #include "TimerWidget.h"
+#include "Tile.h"
 
 #include <QPushButton>
 #include <QWidget>
 #include <QGridLayout>
 #include <QMenuBar>
 #include <QTimer>
+#include <QEvent>
+#include <QObject>
+#include <QMouseEvent>
+
 #include <iostream>
 
 const char* mainStyleSheet =
@@ -31,6 +36,12 @@ MainWindow::MainWindow()
 	QGridLayout* layout = new QGridLayout(centralWidget);
 
 	SudokuBoard* board = new SudokuBoard(centralWidget);
+	
+	for (Tile* tile : board->findChildren<Tile*>())
+	{
+		//tile->installEventFilter(this);
+	}
+
 	NumberWidget* numbers = new NumberWidget(centralWidget);
 	TimerWidget* timer = new TimerWidget(centralWidget);
 
@@ -61,4 +72,22 @@ void MainWindow::test()
 void MainWindow::rirarun()
 {
 	std::cout << "run" << std::endl;
+}
+
+bool MainWindow::eventFilter(QObject* object, QEvent* event)
+{
+	qDebug() << event;
+	if (event->type() == 1)
+	{
+		qDebug() << event;
+		QMouseEvent* mouseEvent = static_cast<QMouseEvent*>(event);
+		qDebug() << mouseEvent->buttons();
+		return true;
+		if (mouseEvent->buttons() == Qt::LeftButton)
+			qDebug() << "Left\n";
+		else if (mouseEvent->buttons() == Qt::RightButton)
+			qDebug() << "Right\n";
+	}
+
+	return true;
 }
