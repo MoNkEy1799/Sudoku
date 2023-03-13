@@ -18,10 +18,7 @@ SudokuBoard::SudokuBoard(QWidget* parent)
 
 	m_generator = new SudokuGenerator();
 	bool success = true;
-	while (success)
-	{
-		m_difficulty = m_generator->generateRandomUniqueGrid(m_grid, success);
-	}
+	m_difficulty = m_generator->generateRandomUniqueGrid(m_grid, success);
 
 	createTiles();
 	fillBoard();
@@ -42,7 +39,7 @@ void SudokuBoard::createTiles()
 
 			if (m_grid[i][j])
 			{
-				tile->setNumber(m_grid[i][j]);
+				tile->fixNumber(m_grid[i][j]);
 				tile->installEventFilter(this);
 			}
 

@@ -15,12 +15,13 @@ class Tile;
 
 class SudokuBoard : public QWidget
 {
-
 	Q_OBJECT
 
 public:
 	SudokuBoard(QWidget* parent = nullptr);
 	~SudokuBoard();
+
+	std::array<Tile*, 81>& getTiles() { return m_tiles; };
 	
 private:
 	std::array<Tile*, 81> m_tiles;

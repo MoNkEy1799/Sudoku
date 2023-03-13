@@ -9,18 +9,16 @@ class SudokuBoard;
 
 class Tile : public QWidget
 {
-
 	Q_OBJECT
 
 public:
 	Tile(SudokuBoard* board = nullptr, QWidget* parent = nullptr);
 
 	void addGuess(int guess);
-	void setNumber(int number);
+	void addNumber(int number);
+	void fixNumber(int number);
 
-	void colorUp() { setStyleSheet("background : yellow"); };
-
-	void mouseReleaseEvent(QMouseEvent* event) override;
+	QPushButton* getButton() { return m_inner; };
 
 private:
 	std::vector<int> m_guess;

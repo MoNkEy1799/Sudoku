@@ -14,6 +14,7 @@ Tile::Tile(SudokuBoard* board, QWidget* parent)
 	m_inner->setFixedSize(40, 40);
 	m_inner->move(3, 3);
 	m_inner->setObjectName("TileOpen");
+	m_inner->setCheckable(true);
 
 	QFont font = QFont("Sans-Serif", 15);
 	font.setBold(true);
@@ -28,13 +29,13 @@ void Tile::addGuess(int guess)
 	m_guess.push_back(guess);
 }
 
-void Tile::setNumber(int number)
+void Tile::addNumber(int number)
 {
 	m_inner->setText(std::to_string(number).c_str());
-	m_inner->setObjectName("TileSet");
 }
 
-void Tile::mouseReleaseEvent(QMouseEvent* event)
+void Tile::fixNumber(int number)
 {
-	qDebug() << event;
+	m_inner->setText(std::to_string(number).c_str());
+	m_inner->setObjectName("TileFixed");
 }

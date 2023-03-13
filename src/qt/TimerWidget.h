@@ -12,7 +12,6 @@ public:
 
 class TimerWidget : public QWidget
 {
-
 	Q_OBJECT
 
 public:

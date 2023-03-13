@@ -11,7 +11,7 @@
 TimerWidget::TimerWidget(QWidget* parent)
     : QWidget(parent), m_totalSeconds(0), m_timer(nullptr)
 {
-    QFont font = QFont("Sans-Serif", 15);
+    QFont font = QFont("Sans-Serif", 20);
     font.setBold(true);
 
     m_timer = new QTimer(this);
