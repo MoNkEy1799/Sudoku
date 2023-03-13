@@ -4,6 +4,7 @@
 #include <QPushButton>
 
 #include <string>
+#include <array>
 
 class SudokuBoard;
 
@@ -18,10 +19,12 @@ public:
 	void addNumber(int number);
 	void fixNumber(int number);
 
+	bool inGuess(int number) { return m_guess[number]; };
+
 	QPushButton* getButton() { return m_inner; };
 
 private:
-	std::vector<int> m_guess;
+	std::array<bool, 9> m_guess;
 	QPushButton* m_inner;
 	SudokuBoard* m_board;
 	QFont m_font;

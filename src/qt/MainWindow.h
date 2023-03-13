@@ -19,6 +19,8 @@ public:
 	NumberWidget* numbers;
 	TimerWidget* timer;
 
+	int getSelectedNumber() { return m_currentNumber % 200 / 20; };
+
 private:
 	uint32_t m_currentNumber;
 

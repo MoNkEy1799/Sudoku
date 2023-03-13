@@ -8,11 +8,12 @@
 
 #include <string>
 
-NumberWidget::NumberWidget(QWidget* parent)
+NumberWidget::NumberWidget(int width, QWidget* parent)
 	: QWidget(parent), m_numbers()
 {
 	m_layout = new QGridLayout(this);
-	setMinimumHeight(150);
+	setMaximumHeight(150);
+	setMaximumWidth(width);
 
 	QFont font = QFont("Sans-Serif", 16);
 	font.setBold(true);
@@ -45,4 +46,6 @@ NumberWidget::NumberWidget(QWidget* parent)
 			m_layout->addWidget(button, 1, 4);
 		}
 	}
+
+	m_numbers[0]->setChecked(true);
 }

@@ -46,20 +46,21 @@ std::string styleSheet =
 const char* mainStyleSheet = styleSheet.c_str();
 
 MainWindow::MainWindow()
-	: QMainWindow(), m_currentNumber(2147483647)
+	: QMainWindow(), m_currentNumber(2147483610)
 {
 	QWidget* centralWidget = new QWidget(this);
 	QGridLayout* layout = new QGridLayout(centralWidget);
 
 	board = new SudokuBoard(centralWidget);
-	numbers = new NumberWidget(centralWidget);
-	timer = new TimerWidget(centralWidget);
+	numbers = new NumberWidget(445, centralWidget);
+	timer = new TimerWidget(445, centralWidget);
 
 	for (Tile* tile : board->findChildren<Tile*>())
 	{
 		tile->getButton()->installEventFilter(this);
 	}
 
+	installEventFilter(this);
 	board->installEventFilter(this);
 	numbers->installEventFilter(this);
 	timer->installEventFilter(this);
@@ -72,6 +73,7 @@ MainWindow::MainWindow()
 
 	setStyleSheet(mainStyleSheet);
 	move(500, 50);
+	setMinimumWidth(600);
 
 	for (QPushButton* button : numbers->findChildren<QPushButton*>())
 	{
@@ -140,7 +142,7 @@ void MainWindow::processWheel(QEvent* event)
 {
 	QWheelEvent* wheelEvent = static_cast<QWheelEvent*>(event);
 
-	if (wheelEvent->angleDelta().y() < 0)
+	if (wheelEvent->angleDelta().y() > 0)
 	{
 		m_currentNumber--;
 	}
@@ -150,5 +152,5 @@ void MainWindow::processWheel(QEvent* event)
 		m_currentNumber++;
 	}
 
-	numbers->setNumber(m_currentNumber % 200 / 20);
+	numbers->setNumber(getSelectedNumber());
 }

@@ -8,7 +8,7 @@
 #include <string>
 
 Tile::Tile(SudokuBoard* board, QWidget* parent)
-	: QWidget(parent), m_board(board)
+	: QWidget(parent), m_board(board), m_guess({ false })
 {
 	m_inner = new QPushButton(this);
 	m_inner->setFixedSize(40, 40);
@@ -26,7 +26,16 @@ Tile::Tile(SudokuBoard* board, QWidget* parent)
 
 void Tile::addGuess(int guess)
 {
-	m_guess.push_back(guess);
+	if (inGuess(guess))
+	{
+		m_guess[guess] = false;
+		return;
+	}
+
+	m_guess[guess] = true;
+
+
+
 }
 
 void Tile::addNumber(int number)

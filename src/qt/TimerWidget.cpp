@@ -8,7 +8,7 @@
 
 #include <string>
 
-TimerWidget::TimerWidget(QWidget* parent)
+TimerWidget::TimerWidget(int width, QWidget* parent)
     : QWidget(parent), m_totalSeconds(0), m_timer(nullptr)
 {
     QFont font = QFont("Sans-Serif", 20);
@@ -21,6 +21,7 @@ TimerWidget::TimerWidget(QWidget* parent)
     m_timeLabel->setText("0S ");
 
     setMinimumHeight(100);
+    setMaximumWidth(width);
 
     QGridLayout* layout = new QGridLayout(this);
     layout->addWidget(m_timeLabel);

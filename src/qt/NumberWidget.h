@@ -11,7 +11,7 @@ class NumberWidget : public QWidget
 	Q_OBJECT
 
 public:
-	NumberWidget(QWidget* parent = nullptr);
+	NumberWidget(int width, QWidget* parent = nullptr);
 
 	void setNumber(int number) { m_numbers[number]->setChecked(true); };
 
