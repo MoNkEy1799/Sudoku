@@ -9,6 +9,7 @@
 class SudokuBoard;
 class NumberWidget;
 class TimerWidget;
+class Tile;
 
 class MainWindow : public QMainWindow
 {
@@ -29,4 +30,6 @@ private:
 	void processHold(QEvent* event);
 	void processClick(QEvent* event);
 	void processWheel(QEvent* event);
+
+	Tile* getTileUnderMouse(QMouseEvent* mouseEvent);
 };

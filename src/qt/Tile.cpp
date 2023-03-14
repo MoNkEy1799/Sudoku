@@ -16,9 +16,10 @@ Tile::Tile(SudokuBoard* board, QWidget* parent)
 	m_inner->setObjectName("TileOpen");
 	m_inner->setCheckable(true);
 
-	QFont font = QFont("Sans-Serif", 15);
-	font.setBold(true);
-	m_inner->setFont(font);
+	m_fontSet = QFont("Sans-Serif", 15);
+	m_fontSet.setBold(true);
+	m_fontGuess = QFont("Sans-Serif", 10);
+	m_fontGuess.setBold(true);
 
 	setFixedSize(TILE_SIZE, TILE_SIZE);
 	setObjectName("Tile");
@@ -26,6 +27,8 @@ Tile::Tile(SudokuBoard* board, QWidget* parent)
 
 void Tile::addGuess(int guess)
 {
+	m_inner->setFont(m_fontGuess);
+
 	if (inGuess(guess))
 	{
 		m_guess[guess] = false;
@@ -34,17 +37,18 @@ void Tile::addGuess(int guess)
 
 	m_guess[guess] = true;
 
-
-
+	m_inner->setText(std::to_string(guess).c_str());
 }
 
 void Tile::addNumber(int number)
 {
+	m_inner->setFont(m_fontGuess);
 	m_inner->setText(std::to_string(number).c_str());
 }
 
 void Tile::fixNumber(int number)
 {
-	m_inner->setText(std::to_string(number).c_str());
+	m_inner->setFont(m_fontSet);
 	m_inner->setObjectName("TileFixed");
+	m_inner->setText(std::to_string(number).c_str());
 }

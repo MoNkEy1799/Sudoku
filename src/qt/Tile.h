@@ -27,5 +27,5 @@ private:
 	std::array<bool, 9> m_guess;
 	QPushButton* m_inner;
 	SudokuBoard* m_board;
-	QFont m_font;
+	QFont m_fontGuess, m_fontSet;
 };

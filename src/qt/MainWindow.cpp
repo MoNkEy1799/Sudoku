@@ -88,15 +88,17 @@ bool MainWindow::eventFilter(QObject* object, QEvent* event)
 	switch (event->type())
 	{
 	case QEvent::MouseMove:
-		processHold(event);
+		qDebug() << object->isWindowType();
+		//processHold(event);
 		break;
 
 	case QEvent::MouseButtonPress:
-		processClick(event);
+		qDebug() << object->objectName();
+		//processClick(event);
 		break;
 
 	case QEvent::Wheel:
-		processWheel(event);
+		//processWheel(event);
 		break;
 	}
 
@@ -106,25 +108,17 @@ bool MainWindow::eventFilter(QObject* object, QEvent* event)
 void MainWindow::processHold(QEvent* event)
 {
 	QMouseEvent* mouseEvent = static_cast<QMouseEvent*>(event);
-	QPoint pos = mouseEvent->globalPos();
 
 	if (mouseEvent->buttons() != Qt::RightButton)
 	{
 		return;
 	}
 
-	SudokuBoard* board = findChild<SudokuBoard*>();
-	std::array<Tile*, 81> tiles = board->getTiles();
+	Tile* tile = getTileUnderMouse(mouseEvent);
 
-	for (int i = 0; i < 81; i++)
+	if (tile)
 	{
-		QRect local = tiles[i]->geometry();
-		QRect global = QRect(board->mapToGlobal(local.topLeft()), local.size());
-
-		if (global.contains(pos))
-		{
-			qDebug() << i;
-		}
+		qDebug() << tile->getButton()->text();
 	}
 }
 
@@ -135,6 +129,14 @@ void MainWindow::processClick(QEvent* event)
 	if (mouseEvent->buttons() != Qt::RightButton)
 	{
 		return;
+	}
+
+	Tile* tile = getTileUnderMouse(mouseEvent);
+
+	if (tile)
+	{
+		qDebug() << getSelectedNumber() + 1;
+		//tile->addGuess(getSelectedNumber() + 1);
 	}
 }
 
@@ -153,4 +155,23 @@ void MainWindow::processWheel(QEvent* event)
 	}
 
 	numbers->setNumber(getSelectedNumber());
+}
+
+Tile* MainWindow::getTileUnderMouse(QMouseEvent* mouseEvent)
+{
+	QPoint pos = mouseEvent->globalPos();
+	std::array<Tile*, 81> tiles = board->getTiles();
+
+	for (int i = 0; i < 81; i++)
+	{
+		QRect local = tiles[i]->geometry();
+		QRect global = QRect(board->mapToGlobal(local.topLeft()), local.size());
+
+		if (global.contains(pos))
+		{
+			return tiles[i];
+		}
+	}
+
+	return nullptr;
 }
