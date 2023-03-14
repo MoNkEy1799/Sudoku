@@ -35,7 +35,9 @@ void SudokuBoard::createTiles()
 	{
 		for (int j = 0; j < 9; j++)
 		{
-			Tile* tile = new Tile(this, this);
+			int index = i * 9 + j;
+			Tile* tile = new Tile(index, this, this);
+			m_tiles[index] = tile;
 
 			if (m_grid[i][j])
 			{
@@ -43,8 +45,6 @@ void SudokuBoard::createTiles()
 				tile->installEventFilter(this);
 			}
 
-			int index = i * 9 + j;
-			m_tiles[index] = tile;
 		}
 	}
 }
@@ -56,31 +56,31 @@ void SudokuBoard::fillBoard()
 	{
 		for (int j = 0; j < 17; j++)
 		{
-			if (i % 2 == 0 and j % 2 == 0)
+			if (i % 2 == 0 && j % 2 == 0)
 			{
 				m_layout->addWidget(m_tiles[tileIndex], i, j);
 				tileIndex++;
 			}
 
-			else if ((j == 5 or j == 11) and i == 0)
+			else if ((j == 5 || j == 11) && i == 0)
 			{
 				FillLine* line = new FillLine(this, LineStyle::VTHICK);
 				m_layout->addWidget(line, i, j, 17, 1, Qt::AlignCenter);
 			}
 
-			else if (j % 2 == 1 and i % 2 == 0 and !(j == 5 or j == 11))
+			else if (j % 2 == 1 && i % 2 == 0 && !(j == 5 || j == 11))
 			{
 				FillLine* line = new FillLine(this, LineStyle::VTHIN);
 				m_layout->addWidget(line, i, j, Qt::AlignCenter);
 			}
 
-			else if ((i == 5 or i == 11) and j == 0)
+			else if ((i == 5 || i == 11) && j == 0)
 			{
 				FillLine* line = new FillLine(this, LineStyle::HTHICK);
 				m_layout->addWidget(line, i, j, 1, 17, Qt::AlignCenter);
 			}
 
-			else if (i % 2 == 1 and j % 2 == 0 and !(i == 5 or i == 11))
+			else if (i % 2 == 1 && j % 2 == 0 && !(i == 5 || i == 11))
 			{
 				FillLine* line = new FillLine(this, LineStyle::HTHIN);
 				m_layout->addWidget(line, i, j, Qt::AlignCenter);

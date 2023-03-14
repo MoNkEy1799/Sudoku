@@ -118,7 +118,7 @@ bool SudokuSolver::isLocationValid(SUDOKU_GRID& grid, int row, int col, int num)
 	bool colSafe = usedInCol(grid, col, num);
 	bool boxSafe = usedInBox(grid, row / 3, col / 3, num);
 
-	return (!rowSafe and !colSafe and !boxSafe);
+	return (!rowSafe && !colSafe && !boxSafe);
 }
 
 bool SudokuSolver::solveSudoku(SUDOKU_GRID& grid, bool& success)

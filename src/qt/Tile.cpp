@@ -7,8 +7,8 @@
 
 #include <string>
 
-Tile::Tile(SudokuBoard* board, QWidget* parent)
-	: QWidget(parent), m_board(board), m_guess({ false })
+Tile::Tile(int id, SudokuBoard* board, QWidget* parent)
+	: QWidget(parent), m_board(board), m_guess({ false }), m_id(id)
 {
 	m_inner = new QPushButton(this);
 	m_inner->setFixedSize(40, 40);

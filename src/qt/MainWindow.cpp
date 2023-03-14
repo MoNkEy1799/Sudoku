@@ -15,6 +15,8 @@
 #include <QWheelEvent>
 #include <QPoint>
 #include <QList>
+#include <QHoverEvent>
+#include <QApplication>
 
 #include <string>
 
@@ -34,19 +36,19 @@ std::string styleSheet =
 "QLabel#ThickLine {background: " + txtCol + ";}"
 
 "QPushButton#Number {border: 2px solid " + bdrCol + "; color: " + txtCol + "; border-radius: 20;}"
-"QPushButton#Number::hover {background: " + hvrCol + "; color: " + bgCol + ";}"
-"QPushButton#Number::checked {background: " + txtCol + "; color: " + bgCol + ";}"
+"QPushButton#Number:hover {background: " + hvrCol + "; color: " + bgCol + ";}"
+"QPushButton#Number:checked {background: " + txtCol + "; color: " + bgCol + ";}"
 
 "QPushButton#TileOpen {background: " + bgCol + "; color: " + txtCol + "; border-radius: 20;}"
-"QPushButton#TileOpen::hover {background: " + hvrCol + "; color: " + bgCol + ";}"
+"QPushButton#TileOpen:hover {background: " + hvrCol + "; color: " + bgCol + ";}"
 
 "QPushButton#TileFixed {background: #303030; color: " + bgCol + "; border-radius: 20;}"
-"QPushButton#TileFixed::hover {background: " + hvrCol + "; color: " + bgCol + ";}";
+"QPushButton#TileFixed:hover {background: " + hvrCol + "; color: " + bgCol + ";}";
 
 const char* mainStyleSheet = styleSheet.c_str();
 
 MainWindow::MainWindow()
-	: QMainWindow(), m_currentNumber(2147483610)
+	: QMainWindow(), m_currentNumber(2147483610), m_visitedTiles({ false })
 {
 	QWidget* centralWidget = new QWidget(this);
 	QGridLayout* layout = new QGridLayout(centralWidget);
@@ -60,10 +62,10 @@ MainWindow::MainWindow()
 		tile->getButton()->installEventFilter(this);
 	}
 
-	installEventFilter(this);
-	board->installEventFilter(this);
-	numbers->installEventFilter(this);
-	timer->installEventFilter(this);
+	//installEventFilter(this);
+	//board->installEventFilter(this);
+	//numbers->installEventFilter(this);
+	//timer->installEventFilter(this);
 
 	layout->setSpacing(0);
 	layout->setContentsMargins(0, 0, 0, 0);
@@ -88,17 +90,19 @@ bool MainWindow::eventFilter(QObject* object, QEvent* event)
 	switch (event->type())
 	{
 	case QEvent::MouseMove:
-		qDebug() << object->isWindowType();
-		//processHold(event);
+		processHold(event);
 		break;
 
 	case QEvent::MouseButtonPress:
-		qDebug() << object->objectName();
-		//processClick(event);
+		processPress(event);
+		break;
+
+	case QEvent::MouseButtonRelease:
+		processRelease(event);
 		break;
 
 	case QEvent::Wheel:
-		//processWheel(event);
+		processWheel(event);
 		break;
 	}
 
@@ -118,11 +122,17 @@ void MainWindow::processHold(QEvent* event)
 
 	if (tile)
 	{
-		qDebug() << tile->getButton()->text();
+		bool visited = m_visitedTiles[tile->getId()];
+
+		if (!visited)
+		{
+			tile->getButton()->setText(std::to_string(getSelectedNumber()).c_str());
+			m_visitedTiles[tile->getId()] = true;
+		}
 	}
 }
 
-void MainWindow::processClick(QEvent* event)
+void MainWindow::processPress(QEvent* event)
 {
 	QMouseEvent* mouseEvent = static_cast<QMouseEvent*>(event);
 
@@ -137,6 +147,16 @@ void MainWindow::processClick(QEvent* event)
 	{
 		qDebug() << getSelectedNumber() + 1;
 		//tile->addGuess(getSelectedNumber() + 1);
+	}
+}
+
+void MainWindow::processRelease(QEvent* event)
+{
+	QMouseEvent* mouseEvent = static_cast<QMouseEvent*>(event);
+
+	if (mouseEvent->buttons() == Qt::NoButton)
+	{
+		m_visitedTiles = { false };
 	}
 }
 
