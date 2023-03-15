@@ -19,6 +19,7 @@
 #include <QApplication>
 
 #include <string>
+#include <chrono>
 
 std::string bgCol = "#0f0f0f";
 std::string txtCol = "#a5a5a5";
@@ -47,8 +48,8 @@ std::string styleSheet =
 
 const char* mainStyleSheet = styleSheet.c_str();
 
-MainWindow::MainWindow()
-	: QMainWindow(), m_currentNumber(2147483610), m_visitedTiles({ false })
+MainWindow::MainWindow(bool useMouse)
+	: QMainWindow(), m_currentNumber(WHEEL_START), m_visitedTiles({ false }), m_mouseUsed(useMouse)
 {
 	QWidget* centralWidget = new QWidget(this);
 	QGridLayout* layout = new QGridLayout(centralWidget);
@@ -79,7 +80,7 @@ MainWindow::MainWindow()
 
 	for (QPushButton* button : numbers->findChildren<QPushButton*>())
 	{
-		connect(button, &QPushButton::clicked, timer, &TimerWidget::startMyTimer);
+		connect(button, &QPushButton::clicked, timer, [this, button] { selectNumberButton(button); });
 	}
 
 	setCentralWidget(centralWidget);
@@ -109,26 +110,57 @@ bool MainWindow::eventFilter(QObject* object, QEvent* event)
 	return false;
 }
 
+void MainWindow::selectNumberButton(QPushButton* pressedButton)
+{
+	int number;
+
+	if (pressedButton->text().contains("X"))
+	{
+		number = 10;
+	}
+
+	else
+	{
+		number = std::stoi(pressedButton->text().toStdString());
+	}
+
+	m_currentNumber = WHEEL_START + number - 1;
+}
+
 void MainWindow::processHold(QEvent* event)
 {
 	QMouseEvent* mouseEvent = static_cast<QMouseEvent*>(event);
+	Qt::MouseButtons buttons = mouseEvent->buttons();
 
-	if (mouseEvent->buttons() != Qt::RightButton)
+	if (buttons != Qt::RightButton || buttons == Qt::LeftButton)
 	{
 		return;
 	}
 
 	Tile* tile = getTileUnderMouse(mouseEvent);
 
-	if (tile)
+	if (!tile || tile->getButton()->objectName().contains("Fixed"))
 	{
-		bool visited = m_visitedTiles[tile->getId()];
+		return;
+	}
 
-		if (!visited)
-		{
-			tile->getButton()->setText(std::to_string(getSelectedNumber()).c_str());
-			m_visitedTiles[tile->getId()] = true;
-		}
+	bool visited = m_visitedTiles[tile->getId()];
+
+	if (visited)
+	{
+		return;
+	}
+
+	m_visitedTiles[tile->getId()] = true;
+
+	if (getSelectedNumber() == 9)
+	{
+		tile->removeGuesses();
+	}
+
+	else
+	{
+		tile->addGuess(getSelectedNumber() + 1);
 	}
 }
 
@@ -143,10 +175,21 @@ void MainWindow::processPress(QEvent* event)
 
 	Tile* tile = getTileUnderMouse(mouseEvent);
 
-	if (tile)
+	if (!tile || tile->getButton()->objectName().contains("Fixed"))
 	{
-		qDebug() << getSelectedNumber() + 1;
-		//tile->addGuess(getSelectedNumber() + 1);
+		return;
+	}
+
+	m_visitedTiles[tile->getId()] = true;
+
+	if (getSelectedNumber() == 9)
+	{
+		tile->removeGuesses();
+	}
+
+	else
+	{
+		tile->addGuess(getSelectedNumber() + 1);
 	}
 }
 
@@ -163,8 +206,15 @@ void MainWindow::processRelease(QEvent* event)
 void MainWindow::processWheel(QEvent* event)
 {
 	QWheelEvent* wheelEvent = static_cast<QWheelEvent*>(event);
+	int direction = 1;
+	int (*getNumber)() = &(this->getSelectedNumberTouch);
 
-	if (wheelEvent->angleDelta().y() > 0)
+	if (m_mouseUsed)
+	{
+		direction = -1;
+	}
+
+	if (direction * wheelEvent->angleDelta().y() > 0)
 	{
 		m_currentNumber--;
 	}

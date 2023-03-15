@@ -4,21 +4,6 @@
 #include <array>
 #include <string>
 
-void printGrid(SUDOKU_GRID& grid)
-{
-	for (int i = 0; i < 9; i++)
-	{
-		for (int j = 0; j < 9; j++)
-		{
-			std::cout << grid[i][j] << "  ";
-		}
-
-		std::cout << std::endl;
-	}
-
-	std::cout << "\n" << "- - - - - - - - - - - - -" << "\n" << std::endl;
-}
-
 SudokuSolver::SudokuSolver()
 	: m_solutionCounter(0), m_backtrackCounter(0)
 {
@@ -50,6 +35,21 @@ int SudokuSolver::countSolutions(SUDOKU_GRID grid, bool& success)
 	m_solutionCounter = 0;
 	solveSudoku(grid, success);
 	return m_solutionCounter;
+}
+
+void SudokuSolver::printGrid(SUDOKU_GRID& grid)
+{
+	for (int i = 0; i < 9; i++)
+	{
+		for (int j = 0; j < 9; j++)
+		{
+			std::cout << grid[i][j] << "  ";
+		}
+
+		std::cout << std::endl;
+	}
+
+	std::cout << "\n" << "- - - - - - - - - - - - -" << "\n" << std::endl;
 }
 
 bool SudokuSolver::findEmptyLocation(SUDOKU_GRID& grid, int& row, int& col)

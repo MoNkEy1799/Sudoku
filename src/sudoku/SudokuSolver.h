@@ -4,8 +4,6 @@
 
 typedef std::array<std::array<int, 9>, 9> SUDOKU_GRID;
 
-void printGrid(SUDOKU_GRID& grid);
-
 class SudokuSolver
 {
 public:
@@ -15,6 +13,8 @@ public:
 	void solveAndPrint(SUDOKU_GRID grid, bool& success);
 	void solve(SUDOKU_GRID& grid, bool& success);
 	int countSolutions(SUDOKU_GRID grid, bool& success);
+
+	static void printGrid(SUDOKU_GRID& grid);
 
 private:
 	int m_solutionCounter, m_backtrackCounter;

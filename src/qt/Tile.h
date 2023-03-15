@@ -16,6 +16,7 @@ public:
 	Tile(int id, SudokuBoard* board = nullptr, QWidget* parent = nullptr);
 
 	void addGuess(int guess);
+	void removeGuesses();
 	void addNumber(int number);
 	void fixNumber(int number);
 	int getId() { return m_id; };
@@ -30,4 +31,6 @@ private:
 	QFont m_fontGuess, m_fontSet;
 
 	bool inGuess(int number) { return m_guess[number]; };
+
+	void displayGuess();
 };
