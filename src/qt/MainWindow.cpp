@@ -17,6 +17,7 @@
 #include <QList>
 #include <QHoverEvent>
 #include <QApplication>
+#include <QIcon>
 
 #include <string>
 #include <chrono>
@@ -49,7 +50,7 @@ std::string styleSheet =
 const char* mainStyleSheet = styleSheet.c_str();
 
 MainWindow::MainWindow(bool useMouse)
-	: QMainWindow(), m_currentNumber(WHEEL_START), m_visitedTiles({ false }), m_mouseUsed(useMouse)
+	: QMainWindow(), m_currentNumber(WHEEL_START), m_visitedTiles({ false })
 {
 	QWidget* centralWidget = new QWidget(this);
 	QGridLayout* layout = new QGridLayout(centralWidget);
@@ -57,6 +58,7 @@ MainWindow::MainWindow(bool useMouse)
 	board = new SudokuBoard(centralWidget);
 	numbers = new NumberWidget(445, centralWidget);
 	timer = new TimerWidget(445, centralWidget);
+	timer->startMyTimer();
 
 	for (Tile* tile : board->findChildren<Tile*>())
 	{
@@ -77,13 +79,27 @@ MainWindow::MainWindow(bool useMouse)
 	setStyleSheet(mainStyleSheet);
 	move(500, 50);
 	setMinimumWidth(600);
+	setCentralWidget(centralWidget);
+	setWindowIcon(QIcon("resources/icon.png"));
+	setWindowTitle("Sudoku Game");
 
 	for (QPushButton* button : numbers->findChildren<QPushButton*>())
 	{
 		connect(button, &QPushButton::clicked, timer, [this, button] { selectNumberButton(button); });
 	}
 
-	setCentralWidget(centralWidget);
+	if (useMouse)
+	{
+		m_direction = -1;
+		m_scrollSpeed = 1;
+	}
+
+	else
+	{
+		m_direction = 1;
+		m_scrollSpeed = 20;
+	}
+
 }
 
 bool MainWindow::eventFilter(QObject* object, QEvent* event)
@@ -124,7 +140,7 @@ void MainWindow::selectNumberButton(QPushButton* pressedButton)
 		number = std::stoi(pressedButton->text().toStdString());
 	}
 
-	m_currentNumber = WHEEL_START + number - 1;
+	m_currentNumber = WHEEL_START + (number - 1) * m_scrollSpeed;
 }
 
 void MainWindow::processHold(QEvent* event)
@@ -167,12 +183,6 @@ void MainWindow::processHold(QEvent* event)
 void MainWindow::processPress(QEvent* event)
 {
 	QMouseEvent* mouseEvent = static_cast<QMouseEvent*>(event);
-
-	if (mouseEvent->buttons() != Qt::RightButton)
-	{
-		return;
-	}
-
 	Tile* tile = getTileUnderMouse(mouseEvent);
 
 	if (!tile || tile->getButton()->objectName().contains("Fixed"))
@@ -180,16 +190,15 @@ void MainWindow::processPress(QEvent* event)
 		return;
 	}
 
-	m_visitedTiles[tile->getId()] = true;
-
-	if (getSelectedNumber() == 9)
+	switch (mouseEvent->button())
 	{
-		tile->removeGuesses();
-	}
+	case Qt::RightButton:
+		rightClick(tile);
+		break;
 
-	else
-	{
-		tile->addGuess(getSelectedNumber() + 1);
+	case Qt::LeftButton:
+		leftClick(tile);
+		break;
 	}
 }
 
@@ -206,15 +215,8 @@ void MainWindow::processRelease(QEvent* event)
 void MainWindow::processWheel(QEvent* event)
 {
 	QWheelEvent* wheelEvent = static_cast<QWheelEvent*>(event);
-	int direction = 1;
-	int (*getNumber)() = &(this->getSelectedNumberTouch);
 
-	if (m_mouseUsed)
-	{
-		direction = -1;
-	}
-
-	if (direction * wheelEvent->angleDelta().y() > 0)
+	if (m_direction * wheelEvent->angleDelta().y() > 0)
 	{
 		m_currentNumber--;
 	}
@@ -225,6 +227,39 @@ void MainWindow::processWheel(QEvent* event)
 	}
 
 	numbers->setNumber(getSelectedNumber());
+}
+
+void MainWindow::rightClick(Tile* tile)
+{
+	m_visitedTiles[tile->getId()] = true;
+
+	if (getSelectedNumber() == 9)
+	{
+		tile->removeGuesses();
+	}
+
+	else
+	{
+		tile->addGuess(getSelectedNumber() + 1);
+	}
+}
+
+void MainWindow::leftClick(Tile* tile)
+{
+	if (getSelectedNumber() == 9)
+	{
+		tile->removeGuesses();
+	}
+
+	else
+	{
+		tile->addNumber(getSelectedNumber() + 1);
+	}
+}
+
+int MainWindow::getSelectedNumber()
+{
+	return m_currentNumber % (10 * m_scrollSpeed) / m_scrollSpeed;
 }
 
 Tile* MainWindow::getTileUnderMouse(QMouseEvent* mouseEvent)

@@ -61,6 +61,8 @@ void Tile::removeGuesses()
 
 void Tile::addNumber(int number)
 {
+	removeGuesses();
+
 	m_inner->setFont(m_fontSet);
 	m_inner->setStyleSheet("text-align: center");
 	m_inner->setText(std::to_string(number).c_str());

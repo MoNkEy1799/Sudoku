@@ -18,7 +18,7 @@ TimerWidget::TimerWidget(int width, QWidget* parent)
     m_timeLabel = new QLabel(this);
     m_timeLabel->setFont(font);
     m_timeLabel->setAlignment(Qt::AlignCenter);
-    m_timeLabel->setText("0S ");
+    m_timeLabel->setText("0s ");
 
     setMinimumHeight(100);
     setMaximumWidth(width);
@@ -46,15 +46,15 @@ void TimerWidget::updateLabel()
 
     if (currentTime.hours != 0)
     {
-        text += std::to_string(currentTime.hours) + "H ";
+        text += std::to_string(currentTime.hours) + "h ";
     }
 
     if (currentTime.minutes != 0)
     {
-        text += std::to_string(currentTime.minutes) + "M ";
+        text += std::to_string(currentTime.minutes) + "m ";
     }
 
-    text += std::to_string(currentTime.seconds) + "S ";
+    text += std::to_string(currentTime.seconds) + "s ";
     m_timeLabel->setText(text.c_str());
 
     m_totalSeconds++;

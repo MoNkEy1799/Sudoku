@@ -7,7 +7,7 @@
 #include <QObject>
 #include <QPushButton>
 
-const uint32_t WHEEL_START = 2147483610;
+const uint32_t WHEEL_START = 2147484000;
 
 class SudokuBoard;
 class NumberWidget;
@@ -25,8 +25,8 @@ public:
 
 private:
 	uint32_t m_currentNumber;
+	int m_direction, m_scrollSpeed;
 	std::array<bool, 81> m_visitedTiles;
-	bool m_mouseUsed;
 
 	bool eventFilter(QObject* object, QEvent* event) override;
 	void selectNumberButton(QPushButton* pressedButton);
@@ -35,9 +35,10 @@ private:
 	void processPress(QEvent* event);
 	void processRelease(QEvent* event);
 	void processWheel(QEvent* event);
+	void rightClick(Tile* tile);
+	void leftClick(Tile* tile);
 
-	int getSelectedNumber() { return m_currentNumber % 10; };
-	int getSelectedNumberTouch() { return m_currentNumber % 200 / 20; };
+	int getSelectedNumber();
 
 	Tile* getTileUnderMouse(QMouseEvent* mouseEvent);
 };
