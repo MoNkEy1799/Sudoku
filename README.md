@@ -1,2 +1,2 @@
 # Sudoku
-Small Sudoku Game
+Small Sudoku Game using Qt
