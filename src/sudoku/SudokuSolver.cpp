@@ -9,10 +9,6 @@ SudokuSolver::SudokuSolver()
 {
 }
 
-SudokuSolver::~SudokuSolver()
-{
-}
-
 void SudokuSolver::solveAndPrint(SUDOKU_GRID grid, bool& success)
 {
 	m_backtrackCounter = 0;

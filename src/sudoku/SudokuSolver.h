@@ -8,7 +8,6 @@ class SudokuSolver
 {
 public:
 	SudokuSolver();
-	~SudokuSolver();
 
 	void solveAndPrint(SUDOKU_GRID grid, bool& success);
 	void solve(SUDOKU_GRID& grid, bool& success);

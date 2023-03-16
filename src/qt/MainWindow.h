@@ -17,13 +17,16 @@ class Tile;
 class MainWindow : public QMainWindow
 {
 public:
-	MainWindow(bool useMouse);
+	MainWindow();
+
+	void setMouseType(bool mouseType);
 
 	SudokuBoard* board;
 	NumberWidget* numbers;
 	TimerWidget* timer;
 
 private:
+	bool m_useMouse;
 	uint32_t m_currentNumber;
 	int m_direction, m_scrollSpeed;
 	std::array<bool, 81> m_visitedTiles;

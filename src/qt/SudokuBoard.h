@@ -27,7 +27,7 @@ private:
 	std::array<Tile*, 81> m_tiles;
 	QGridLayout* m_layout;
 	SudokuGenerator* m_generator;
-	Difficulty m_difficulty;
+	Difficulty m_setDifficulty;
 	SUDOKU_GRID m_grid;
 
 	void createTiles();

@@ -12,7 +12,7 @@ NumberWidget::NumberWidget(int width, QWidget* parent)
 	: QWidget(parent), m_numbers()
 {
 	m_layout = new QGridLayout(this);
-	setMaximumHeight(150);
+	setMinimumHeight(150);
 	setMaximumWidth(width);
 
 	QFont font = QFont("Sans-Serif", 16);

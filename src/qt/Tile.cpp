@@ -8,9 +8,23 @@
 #include <string>
 #include <algorithm>
 #include <tuple>
+#include <unordered_map>
+
+const std::unordered_map<int, std::array<int, 9>> Tile::m_idLookUp =
+{
+	{ 0, { 0, 1, 2, 9, 10, 11, 18, 19, 20 } },
+	{ 1, { 3, 4, 5, 12, 13, 14, 21, 22, 23 } },
+	{ 2, { 6, 7, 8, 15, 16, 17, 24, 25, 26 } },
+	{ 3, { 27, 28, 29, 36, 37, 38, 45, 46, 47 } },
+	{ 4, { 30, 31, 32, 39, 40, 41, 48, 49, 50 } },
+	{ 5, { 33, 34, 35, 42, 43, 44, 51, 52, 53 } },
+	{ 6, { 54, 55, 56, 63, 64, 65, 72, 73, 74 } },
+	{ 7, { 57, 58, 59, 66, 67, 68, 75, 76, 77 } },
+	{ 8, { 60, 61, 62, 69, 70, 71, 78, 79, 80 } },
+};
 
 Tile::Tile(int id, SudokuBoard* board, QWidget* parent)
-	: QWidget(parent), m_board(board), m_guess({ false }), m_id(id)
+	: QWidget(parent), m_board(board), m_guess({ false }), m_id(id), m_state(TileState::GUESS)
 {
 	m_inner = new QPushButton(this);
 	m_inner->setFixedSize(40, 40);
@@ -29,6 +43,7 @@ Tile::Tile(int id, SudokuBoard* board, QWidget* parent)
 
 void Tile::addGuess(int guess)
 {
+	m_state = TileState::GUESS;
 	m_inner->setFont(m_fontGuess);
 	m_inner->setStyleSheet("text-align: bottom");
 
@@ -61,15 +76,41 @@ void Tile::removeGuesses()
 
 void Tile::addNumber(int number)
 {
+	m_state = TileState::SET;
 	removeGuesses();
+	updateInvolvedGuesses();
 
 	m_inner->setFont(m_fontSet);
 	m_inner->setStyleSheet("text-align: center");
 	m_inner->setText(std::to_string(number).c_str());
 }
 
+void Tile::updateInvolvedGuesses()
+{
+	int col = m_id % 9;
+	int row = m_id / 9;
+	int block = col / 3 + row / 3 * 3;
+
+	std::array<Tile*, 81>& tiles = m_board->getTiles();
+	const std::array<int, 9>& tilesInBlock = Tile::m_idLookUp.at(block);
+
+	for (int i = 0; i < 81; i++)
+	{
+		if (i == m_id || tiles[i]->getState() == TileState::SET || tiles[i]->getState() == TileState::FIXED)
+		{
+			continue;
+		}
+
+		if (i % 9 == col || i / 9 == row || Tile::contains(tilesInBlock, i))
+		{
+			tiles[i]->removeGuesses();
+		}
+	}
+}
+
 void Tile::fixNumber(int number)
 {
+	m_state = TileState::FIXED;
 	m_inner->setFont(m_fontSet);
 	m_inner->setObjectName("TileFixed");
 	m_inner->setText(std::to_string(number).c_str());

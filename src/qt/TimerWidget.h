@@ -19,13 +19,11 @@ public:
 
 	void startMyTimer();
 
-public slots:
-	void updateLabel();
-
 private:
 	QTimer* m_timer;
 	QLabel* m_timeLabel;
 	uint32_t m_totalSeconds;
 
+	void updateLabel();
 	Time getTime();
 };

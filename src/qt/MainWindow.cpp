@@ -3,11 +3,12 @@
 #include "NumberWidget.h"
 #include "TimerWidget.h"
 #include "Tile.h"
+#include "Menu.h"
 
 #include <QPushButton>
 #include <QWidget>
 #include <QGridLayout>
-#include <QMenuBar>
+
 #include <QTimer>
 #include <QEvent>
 #include <QObject>
@@ -38,19 +39,22 @@ std::string styleSheet =
 "QLabel#ThickLine {background: " + txtCol + ";}"
 
 "QPushButton#Number {border: 2px solid " + bdrCol + "; color: " + txtCol + "; border-radius: 20;}"
-"QPushButton#Number:hover {background: " + hvrCol + "; color: " + bgCol + ";}"
-"QPushButton#Number:checked {background: " + txtCol + "; color: " + bgCol + ";}"
+"QPushButton#Number::hover {background: " + hvrCol + "; color: " + bgCol + ";}"
+"QPushButton#Number::checked {background: " + txtCol + "; color: " + bgCol + ";}"
 
 "QPushButton#TileOpen {background: " + bgCol + "; color: " + txtCol + "; border-radius: 20;}"
-"QPushButton#TileOpen:hover {background: " + hvrCol + "; color: " + bgCol + ";}"
+"QPushButton#TileOpen::hover {background: " + hvrCol + "; color: " + bgCol + ";}"
 
 "QPushButton#TileFixed {background: #303030; color: " + bgCol + "; border-radius: 20;}"
-"QPushButton#TileFixed:hover {background: " + hvrCol + "; color: " + bgCol + ";}";
+"QPushButton#TileFixed::hover {background: " + hvrCol + "; color: " + bgCol + ";}"
+
+"QMenuBar::item {background: " + "#303030" + "}"
+"QMenuBar::item::hover {background: " + hvrCol + "}";
 
 const char* mainStyleSheet = styleSheet.c_str();
 
-MainWindow::MainWindow(bool useMouse)
-	: QMainWindow(), m_currentNumber(WHEEL_START), m_visitedTiles({ false })
+MainWindow::MainWindow()
+	: QMainWindow(), m_currentNumber(WHEEL_START), m_visitedTiles({ false }), m_direction(-1), m_scrollSpeed(1)
 {
 	QWidget* centralWidget = new QWidget(this);
 	QGridLayout* layout = new QGridLayout(centralWidget);
@@ -83,23 +87,12 @@ MainWindow::MainWindow(bool useMouse)
 	setWindowIcon(QIcon("resources/icon.png"));
 	setWindowTitle("Sudoku Game");
 
+	Menu* menu = new Menu(this, centralWidget);
+
 	for (QPushButton* button : numbers->findChildren<QPushButton*>())
 	{
 		connect(button, &QPushButton::clicked, timer, [this, button] { selectNumberButton(button); });
 	}
-
-	if (useMouse)
-	{
-		m_direction = -1;
-		m_scrollSpeed = 1;
-	}
-
-	else
-	{
-		m_direction = 1;
-		m_scrollSpeed = 20;
-	}
-
 }
 
 bool MainWindow::eventFilter(QObject* object, QEvent* event)
@@ -143,6 +136,21 @@ void MainWindow::selectNumberButton(QPushButton* pressedButton)
 	m_currentNumber = WHEEL_START + (number - 1) * m_scrollSpeed;
 }
 
+void MainWindow::setMouseType(bool mouse)
+{
+	if (mouse)
+	{
+		m_direction = -1;
+		m_scrollSpeed = 1;
+	}
+
+	else
+	{
+		m_direction = 1;
+		m_scrollSpeed = 20;
+	}
+}
+
 void MainWindow::processHold(QEvent* event)
 {
 	QMouseEvent* mouseEvent = static_cast<QMouseEvent*>(event);
@@ -155,7 +163,7 @@ void MainWindow::processHold(QEvent* event)
 
 	Tile* tile = getTileUnderMouse(mouseEvent);
 
-	if (!tile || tile->getButton()->objectName().contains("Fixed"))
+	if (!tile || tile->getState() == TileState::FIXED)
 	{
 		return;
 	}
@@ -185,7 +193,7 @@ void MainWindow::processPress(QEvent* event)
 	QMouseEvent* mouseEvent = static_cast<QMouseEvent*>(event);
 	Tile* tile = getTileUnderMouse(mouseEvent);
 
-	if (!tile || tile->getButton()->objectName().contains("Fixed"))
+	if (!tile || tile->getState() == TileState::FIXED)
 	{
 		return;
 	}
@@ -265,7 +273,7 @@ int MainWindow::getSelectedNumber()
 Tile* MainWindow::getTileUnderMouse(QMouseEvent* mouseEvent)
 {
 	QPoint pos = mouseEvent->globalPos();
-	std::array<Tile*, 81> tiles = board->getTiles();
+	std::array<Tile*, 81>& tiles = board->getTiles();
 
 	for (int i = 0; i < 81; i++)
 	{
