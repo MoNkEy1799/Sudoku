@@ -21,6 +21,9 @@ public:
 	SudokuBoard(QWidget* parent = nullptr);
 	~SudokuBoard();
 
+	void highlightTiles(int number);
+	void removeAllHighlights();
+
 	std::array<Tile*, 81>& getTiles() { return m_tiles; };
 	
 private:

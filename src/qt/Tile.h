@@ -20,10 +20,13 @@ public:
 	Tile(int id, SudokuBoard* board = nullptr, QWidget* parent = nullptr);
 
 	void addGuess(int guess);
-	void removeGuesses();
+	void removeGuess(int guess);
+	void removeAllGuesses();
 	void addNumber(int number);
-	void updateInvolvedGuesses();
+	void updateInvolvedGuesses(int number);
 	void fixNumber(int number);
+	void highlightTile(int number);
+	void removeHighlight();
 
 	int getId() { return m_id; };
 	TileState getState() { return m_state; };

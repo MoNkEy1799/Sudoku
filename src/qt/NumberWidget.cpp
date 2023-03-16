@@ -46,6 +46,4 @@ NumberWidget::NumberWidget(int width, QWidget* parent)
 			m_layout->addWidget(button, 1, 4);
 		}
 	}
-
-	m_numbers[0]->setChecked(true);
 }

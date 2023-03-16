@@ -4,6 +4,7 @@
 #include <QPushButton>
 #include <QBoxLayout>
 #include <QFont>
+#include <QStyle>
 
 #include <string>
 #include <algorithm>
@@ -68,7 +69,19 @@ void Tile::addGuess(int guess)
 	displayGuess();
 }
 
-void Tile::removeGuesses()
+void Tile::removeGuess(int guess)
+{
+	int index = guess - 1;
+
+	if (inGuess(index))
+	{
+		m_guess[index] = false;
+	}
+
+	displayGuess();
+}
+
+void Tile::removeAllGuesses()
 {
 	m_guess = { false };
 	displayGuess();
@@ -77,15 +90,15 @@ void Tile::removeGuesses()
 void Tile::addNumber(int number)
 {
 	m_state = TileState::SET;
-	removeGuesses();
-	updateInvolvedGuesses();
+	removeAllGuesses();
+	updateInvolvedGuesses(number);
 
 	m_inner->setFont(m_fontSet);
 	m_inner->setStyleSheet("text-align: center");
 	m_inner->setText(std::to_string(number).c_str());
 }
 
-void Tile::updateInvolvedGuesses()
+void Tile::updateInvolvedGuesses(int number)
 {
 	int col = m_id % 9;
 	int row = m_id / 9;
@@ -103,7 +116,7 @@ void Tile::updateInvolvedGuesses()
 
 		if (i % 9 == col || i / 9 == row || Tile::contains(tilesInBlock, i))
 		{
-			tiles[i]->removeGuesses();
+			tiles[i]->removeGuess(number);
 		}
 	}
 }
@@ -114,6 +127,36 @@ void Tile::fixNumber(int number)
 	m_inner->setFont(m_fontSet);
 	m_inner->setObjectName("TileFixed");
 	m_inner->setText(std::to_string(number).c_str());
+}
+
+void Tile::highlightTile(int number)
+{
+	if ((m_state == TileState::SET || m_state == TileState::FIXED) && m_inner->text().contains(std::to_string(number).c_str()))
+	{
+		m_inner->setObjectName("TileHigh");
+	}
+
+	else if (m_state == TileState::GUESS && m_guess[number - 1])
+	{
+		m_inner->setObjectName("TileHigh");
+	}
+
+	setStyleSheet("");
+}
+
+void Tile::removeHighlight()
+{
+	if (m_state == TileState::FIXED)
+	{
+		m_inner->setObjectName("TileFixed");
+	}
+
+	else
+	{
+		m_inner->setObjectName("TileOpen");
+	}
+
+	setStyleSheet("");
 }
 
 void Tile::displayGuess()

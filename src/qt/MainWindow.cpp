@@ -23,36 +23,6 @@
 #include <string>
 #include <chrono>
 
-std::string bgCol = "#0f0f0f";
-std::string txtCol = "#a5a5a5";
-std::string hvrCol = "#757575";
-std::string bdrCol = "#5a5a5a";
-
-std::string styleSheet =
-"QMainWindow {background: " + bgCol + "; }"
-"QWidget {background: " + bgCol + ";}"
-"QWidget#Tile {background: " + bgCol + ";}"
-
-"QLabel {background: " + bgCol + "; color: " + txtCol + ";}"
-
-"QLabel#ThinLine {background: " + bdrCol + ";}"
-"QLabel#ThickLine {background: " + txtCol + ";}"
-
-"QPushButton#Number {border: 2px solid " + bdrCol + "; color: " + txtCol + "; border-radius: 20;}"
-"QPushButton#Number::hover {background: " + hvrCol + "; color: " + bgCol + ";}"
-"QPushButton#Number::checked {background: " + txtCol + "; color: " + bgCol + ";}"
-
-"QPushButton#TileOpen {background: " + bgCol + "; color: " + txtCol + "; border-radius: 20;}"
-"QPushButton#TileOpen::hover {background: " + hvrCol + "; color: " + bgCol + ";}"
-
-"QPushButton#TileFixed {background: #303030; color: " + bgCol + "; border-radius: 20;}"
-"QPushButton#TileFixed::hover {background: " + hvrCol + "; color: " + bgCol + ";}"
-
-"QMenuBar::item {background: " + "#303030" + "}"
-"QMenuBar::item::hover {background: " + hvrCol + "}";
-
-const char* mainStyleSheet = styleSheet.c_str();
-
 MainWindow::MainWindow()
 	: QMainWindow(), m_currentNumber(WHEEL_START), m_visitedTiles({ false }), m_direction(-1), m_scrollSpeed(1)
 {
@@ -80,7 +50,7 @@ MainWindow::MainWindow()
 	layout->addWidget(board, 1, 0);
 	layout->addWidget(numbers, 2, 0);
 
-	setStyleSheet(mainStyleSheet);
+	setStyleSheet(MainStyleSheet().getStyleSheet());
 	move(500, 50);
 	setMinimumWidth(600);
 	setCentralWidget(centralWidget);
@@ -91,7 +61,13 @@ MainWindow::MainWindow()
 
 	for (QPushButton* button : numbers->findChildren<QPushButton*>())
 	{
-		connect(button, &QPushButton::clicked, timer, [this, button] { selectNumberButton(button); });
+		connect(button, &QPushButton::clicked, timer, [this, button] { selectNumberButton(button, 0); });
+
+		if (button->text().contains("1"))
+		{
+			selectNumberButton(button);
+			button->setChecked(true);
+		}
 	}
 }
 
@@ -119,21 +95,34 @@ bool MainWindow::eventFilter(QObject* object, QEvent* event)
 	return false;
 }
 
-void MainWindow::selectNumberButton(QPushButton* pressedButton)
+void MainWindow::selectNumberButton(QPushButton* pressedButton, int number)
 {
-	int number;
+	board->removeAllHighlights();
 
-	if (pressedButton->text().contains("X"))
+	if (!pressedButton)
 	{
-		number = 10;
+		numbers->setNumber(number - 1);
+		if (number < 10)
+		{
+			board->highlightTiles(number);
+		}
 	}
 
 	else
 	{
-		number = std::stoi(pressedButton->text().toStdString());
-	}
+		if (pressedButton->text().contains("X"))
+		{
+			number = 10;
+		}
 
-	m_currentNumber = WHEEL_START + (number - 1) * m_scrollSpeed;
+		else
+		{
+			number = std::stoi(pressedButton->text().toStdString());
+			board->highlightTiles(number);
+		}
+
+		m_currentNumber = WHEEL_START + (number - 1) * m_scrollSpeed;
+	}
 }
 
 void MainWindow::setMouseType(bool mouse)
@@ -179,7 +168,7 @@ void MainWindow::processHold(QEvent* event)
 
 	if (getSelectedNumber() == 9)
 	{
-		tile->removeGuesses();
+		tile->removeAllGuesses();
 	}
 
 	else
@@ -234,7 +223,7 @@ void MainWindow::processWheel(QEvent* event)
 		m_currentNumber++;
 	}
 
-	numbers->setNumber(getSelectedNumber());
+	selectNumberButton(nullptr, getSelectedNumber() + 1);
 }
 
 void MainWindow::rightClick(Tile* tile)
@@ -243,7 +232,7 @@ void MainWindow::rightClick(Tile* tile)
 
 	if (getSelectedNumber() == 9)
 	{
-		tile->removeGuesses();
+		tile->removeAllGuesses();
 	}
 
 	else
@@ -256,18 +245,13 @@ void MainWindow::leftClick(Tile* tile)
 {
 	if (getSelectedNumber() == 9)
 	{
-		tile->removeGuesses();
+		tile->removeAllGuesses();
 	}
 
 	else
 	{
 		tile->addNumber(getSelectedNumber() + 1);
 	}
-}
-
-int MainWindow::getSelectedNumber()
-{
-	return m_currentNumber % (10 * m_scrollSpeed) / m_scrollSpeed;
 }
 
 Tile* MainWindow::getTileUnderMouse(QMouseEvent* mouseEvent)

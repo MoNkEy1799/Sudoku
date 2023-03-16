@@ -29,6 +29,22 @@ SudokuBoard::~SudokuBoard()
 	delete m_generator;
 }
 
+void SudokuBoard::highlightTiles(int number)
+{
+	for (Tile* tile : m_tiles)
+	{
+		tile->highlightTile(number);
+	}
+}
+
+void SudokuBoard::removeAllHighlights()
+{
+	for (Tile* tile : m_tiles)
+	{
+		tile->removeHighlight();
+	}
+}
+
 void SudokuBoard::createTiles()
 {
 	for (int i = 0; i < 9; i++)
@@ -90,6 +106,7 @@ void SudokuBoard::fillBoard()
 }
 
 FillLine::FillLine(QWidget* parent, LineStyle lineStyle)
+	: QLabel(parent)
 {
 	switch (lineStyle)
 	{
