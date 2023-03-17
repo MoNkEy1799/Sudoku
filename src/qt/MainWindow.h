@@ -13,6 +13,7 @@ class SudokuBoard;
 class NumberWidget;
 class TimerWidget;
 class Tile;
+class Menu;
 
 class MainWindow : public QMainWindow
 {
@@ -24,8 +25,10 @@ public:
 	SudokuBoard* board;
 	NumberWidget* numbers;
 	TimerWidget* timer;
+	Menu* menu;
 
 private:
+	bool m_timerRunning;
 	uint32_t m_currentNumber;
 	int m_direction, m_scrollSpeed;
 	std::array<bool, 81> m_visitedTiles;
@@ -39,6 +42,8 @@ private:
 	void processWheel(QEvent* event);
 	void rightClick(Tile* tile);
 	void leftClick(Tile* tile);
+
+	bool checkForWin();
 
 	int getSelectedNumber() { return m_currentNumber % (10 * m_scrollSpeed) / m_scrollSpeed; };
 
@@ -72,9 +77,9 @@ private:
 		"QPushButton#Number::checked {background: " + txtCol + "; color: " + bgCol + ";}"
 
 		"QPushButton#TileOpen {background: " + bgCol + "; color: " + txtCol + "; border-radius: 20;}"
-		"QPushButton#TileOpen::hover {background: " + highCol + "; color: " + txtCol + ";}"
+		"QPushButton#TileOpen::hover {background: " + hvrCol + "; color: " + txtCol + ";}"
 
-		"QPushButton#TileHigh {background: " + "#ff0000" + "; color: " + bgCol + "; border-radius: 20;}"
+		"QPushButton#TileHigh {background: " + highCol + "; color: " + bgCol + "; border-radius: 20;}"
 		"QPushButton#TileHigh::hover {background: " + hvrCol + "; color: " + txtCol + ";}"
 
 		"QPushButton#TileFixed {background: #303030; color: " + bgCol + "; border-radius: 20;}"

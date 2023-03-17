@@ -8,15 +8,18 @@ class SudokuSolver;
 
 enum class Difficulty { EASY, MEDIUM, HARD };
 
+struct GridInfo
+{
+	Difficulty difficultly;
+	uint32_t openTiles;
+};
+
 class SudokuGenerator
 {
 public:
-	SudokuGenerator();
-
-	Difficulty generateRandomUniqueGrid(SUDOKU_GRID& grid, bool& success);
+	static GridInfo generateRandomUniqueGrid(SUDOKU_GRID& grid, bool& success);
 
 private:
-	void makeEmptyGrid(SUDOKU_GRID& grid);
-	void makeRandomGrid(SUDOKU_GRID& grid, bool& success);
-	void removePositionsFromGrid(SUDOKU_GRID& grid, bool& success);
+	static void makeRandomGrid(SUDOKU_GRID& grid, bool& success);
+	static void removePositionsFromGrid(SUDOKU_GRID& grid, bool& success);
 };

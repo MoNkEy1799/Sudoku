@@ -17,7 +17,9 @@ class TimerWidget : public QWidget
 public:
 	TimerWidget(int width, QWidget* parent = nullptr);
 
-	void startMyTimer();
+	void startTimer();
+	void stopTimer();
+	void resetTimer();
 
 private:
 	QTimer* m_timer;

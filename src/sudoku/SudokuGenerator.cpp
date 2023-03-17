@@ -7,17 +7,12 @@
 #include <numeric>
 #include <iostream>
 
-SudokuGenerator::SudokuGenerator()
+GridInfo SudokuGenerator::generateRandomUniqueGrid(SUDOKU_GRID& grid, bool& success)
 {
-}
-
-Difficulty SudokuGenerator::generateRandomUniqueGrid(SUDOKU_GRID& grid, bool& success)
-{
-	makeEmptyGrid(grid);
 	makeRandomGrid(grid, success);
 	removePositionsFromGrid(grid, success);
 
-	int counter = 0;
+	uint32_t counter = 0;
 
 	for (int i = 0; i < 81; i++)
 	{
@@ -29,28 +24,17 @@ Difficulty SudokuGenerator::generateRandomUniqueGrid(SUDOKU_GRID& grid, bool& su
 
 	if (counter <= 22)
 	{
-		return Difficulty::EASY;
+		return GridInfo{ Difficulty::EASY, counter };
 	}
 
 	else if (counter <= 43)
 	{
-		return Difficulty::MEDIUM;
+		return GridInfo{ Difficulty::MEDIUM, counter };
 	}
 
 	else
 	{
-		return Difficulty::HARD;
-	}
-}
-
-void SudokuGenerator::makeEmptyGrid(SUDOKU_GRID& grid)
-{
-	for (int i = 0; i < 9; i++)
-	{
-		for (int j = 0; j < 9; j++)
-		{
-			grid[i][j] = 0;
-		}
+		return GridInfo{ Difficulty::HARD, counter };
 	}
 }
 

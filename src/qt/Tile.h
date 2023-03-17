@@ -30,7 +30,8 @@ public:
 
 	int getId() { return m_id; };
 	TileState getState() { return m_state; };
-	QPushButton* getButton() { return m_inner; };
+	QPushButton* getButton() { return m_innerCircle; };
+	QPushButton* getButtonHighlight() { return m_innerCircleHighlight; };
 
 private:
 	const static std::unordered_map<int, std::array<int, 9>> m_idLookUp;
@@ -41,7 +42,8 @@ private:
 	std::array<bool, 9> m_guess;
 	TileState m_state;
 
-	QPushButton* m_inner;
+	QPushButton* m_innerCircle;
+	QPushButton* m_innerCircleHighlight;
 	SudokuBoard* m_board;
 	QFont m_fontGuess, m_fontSet;
 

@@ -27,11 +27,17 @@ const std::unordered_map<int, std::array<int, 9>> Tile::m_idLookUp =
 Tile::Tile(int id, SudokuBoard* board, QWidget* parent)
 	: QWidget(parent), m_board(board), m_guess({ false }), m_id(id), m_state(TileState::GUESS)
 {
-	m_inner = new QPushButton(this);
-	m_inner->setFixedSize(40, 40);
-	m_inner->move(3, 3);
-	m_inner->setObjectName("TileOpen");
-	m_inner->setCheckable(true);
+	m_innerCircle = new QPushButton(this);
+	m_innerCircle->setFixedSize(42, 42);
+	m_innerCircle->move(2, 2);
+	m_innerCircle->setObjectName("TileOpen");
+	m_innerCircle->setCheckable(true);
+
+	m_innerCircleHighlight = new QPushButton(this);
+	m_innerCircleHighlight->setFixedSize(40, 40);
+	m_innerCircleHighlight->move(3, 3);
+	m_innerCircleHighlight->setObjectName("TileHigh");
+	m_innerCircleHighlight->setCheckable(true);
 
 	m_fontSet = QFont("Sans-Serif", 15);
 	m_fontSet.setBold(true);
@@ -40,13 +46,17 @@ Tile::Tile(int id, SudokuBoard* board, QWidget* parent)
 
 	setFixedSize(TILE_SIZE, TILE_SIZE);
 	setObjectName("Tile");
+	m_innerCircle->raise();
 }
 
 void Tile::addGuess(int guess)
 {
 	m_state = TileState::GUESS;
-	m_inner->setFont(m_fontGuess);
-	m_inner->setStyleSheet("text-align: bottom");
+	m_innerCircle->setFont(m_fontGuess);
+	m_innerCircle->setStyleSheet("text-align: bottom");
+
+	m_innerCircleHighlight->setFont(m_fontGuess);
+	m_innerCircleHighlight->setStyleSheet("text-align: bottom");
 
 	int numberOfGuesses = std::count(m_guess.begin(), m_guess.end(), true);
 	int index = guess - 1;
@@ -54,6 +64,7 @@ void Tile::addGuess(int guess)
 	if (inGuess(index))
 	{
 		m_guess[index] = false;
+		removeHighlight();
 	}
 
 	else if (!inGuess(index) && numberOfGuesses < 8)
@@ -93,9 +104,13 @@ void Tile::addNumber(int number)
 	removeAllGuesses();
 	updateInvolvedGuesses(number);
 
-	m_inner->setFont(m_fontSet);
-	m_inner->setStyleSheet("text-align: center");
-	m_inner->setText(std::to_string(number).c_str());
+	m_innerCircle->setFont(m_fontSet);
+	m_innerCircle->setStyleSheet("text-align: center");
+	m_innerCircle->setText(std::to_string(number).c_str());
+
+	m_innerCircleHighlight->setFont(m_fontSet);
+	m_innerCircleHighlight->setStyleSheet("text-align: center");
+	m_innerCircleHighlight->setText(std::to_string(number).c_str());
 }
 
 void Tile::updateInvolvedGuesses(int number)
@@ -117,6 +132,7 @@ void Tile::updateInvolvedGuesses(int number)
 		if (i % 9 == col || i / 9 == row || Tile::contains(tilesInBlock, i))
 		{
 			tiles[i]->removeGuess(number);
+			tiles[i]->removeHighlight();
 		}
 	}
 }
@@ -124,39 +140,30 @@ void Tile::updateInvolvedGuesses(int number)
 void Tile::fixNumber(int number)
 {
 	m_state = TileState::FIXED;
-	m_inner->setFont(m_fontSet);
-	m_inner->setObjectName("TileFixed");
-	m_inner->setText(std::to_string(number).c_str());
+	m_innerCircle->setFont(m_fontSet);
+	m_innerCircle->setObjectName("TileFixed");
+	m_innerCircle->setText(std::to_string(number).c_str());
+
+	m_innerCircleHighlight->setFont(m_fontSet);
+	m_innerCircleHighlight->setText(std::to_string(number).c_str());
 }
 
 void Tile::highlightTile(int number)
 {
-	if ((m_state == TileState::SET || m_state == TileState::FIXED) && m_inner->text().contains(std::to_string(number).c_str()))
+	if ((m_state == TileState::SET || m_state == TileState::FIXED) && m_innerCircle->text().contains(std::to_string(number).c_str()))
 	{
-		m_inner->setObjectName("TileHigh");
+		m_innerCircleHighlight->raise();
 	}
 
 	else if (m_state == TileState::GUESS && m_guess[number - 1])
 	{
-		m_inner->setObjectName("TileHigh");
+		m_innerCircleHighlight->raise();
 	}
-
-	setStyleSheet("");
 }
 
 void Tile::removeHighlight()
 {
-	if (m_state == TileState::FIXED)
-	{
-		m_inner->setObjectName("TileFixed");
-	}
-
-	else
-	{
-		m_inner->setObjectName("TileOpen");
-	}
-
-	setStyleSheet("");
+	m_innerCircle->raise();
 }
 
 void Tile::displayGuess()
@@ -165,7 +172,8 @@ void Tile::displayGuess()
 
 	if (numberOfGuesses == 0)
 	{
-		m_inner->setText("");
+		m_innerCircle->setText("");
+		m_innerCircleHighlight->setText("");
 		return;
 	}
 
@@ -212,5 +220,6 @@ void Tile::displayGuess()
 		text.replace(lastPos - 1, 1, "\n");
 	}
 
-	m_inner->setText(text.c_str());
+	m_innerCircle->setText(text.c_str());
+	m_innerCircleHighlight->setText(text.c_str());
 }

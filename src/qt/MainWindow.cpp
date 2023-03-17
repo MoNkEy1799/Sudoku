@@ -4,6 +4,8 @@
 #include "TimerWidget.h"
 #include "Tile.h"
 #include "Menu.h"
+#include "../sudoku/SudokuGenerator.h"
+#include "../sudoku/SudokuSolver.h"
 
 #include <QPushButton>
 #include <QWidget>
@@ -24,7 +26,7 @@
 #include <chrono>
 
 MainWindow::MainWindow()
-	: QMainWindow(), m_currentNumber(WHEEL_START), m_visitedTiles({ false }), m_direction(-1), m_scrollSpeed(1)
+	: QMainWindow(), m_currentNumber(WHEEL_START), m_direction(-1), m_scrollSpeed(1), m_timerRunning(false), m_visitedTiles({ false })
 {
 	QWidget* centralWidget = new QWidget(this);
 	QGridLayout* layout = new QGridLayout(centralWidget);
@@ -32,11 +34,12 @@ MainWindow::MainWindow()
 	board = new SudokuBoard(centralWidget);
 	numbers = new NumberWidget(445, centralWidget);
 	timer = new TimerWidget(445, centralWidget);
-	timer->startMyTimer();
+	menu = new Menu(this, centralWidget);
 
 	for (Tile* tile : board->findChildren<Tile*>())
 	{
 		tile->getButton()->installEventFilter(this);
+		tile->getButtonHighlight()->installEventFilter(this);
 	}
 
 	//installEventFilter(this);
@@ -56,8 +59,6 @@ MainWindow::MainWindow()
 	setCentralWidget(centralWidget);
 	setWindowIcon(QIcon("resources/icon.png"));
 	setWindowTitle("Sudoku Game");
-
-	Menu* menu = new Menu(this, centralWidget);
 
 	for (QPushButton* button : numbers->findChildren<QPushButton*>())
 	{
@@ -92,6 +93,7 @@ bool MainWindow::eventFilter(QObject* object, QEvent* event)
 		break;
 	}
 
+	//qDebug() << m_tilesLeft;
 	return false;
 }
 
@@ -164,21 +166,33 @@ void MainWindow::processHold(QEvent* event)
 		return;
 	}
 
-	m_visitedTiles[tile->getId()] = true;
+	int id = tile->getId();
+	int selectedNumber = getSelectedNumber();
+	m_visitedTiles[id] = true;
 
-	if (getSelectedNumber() == 9)
+	if (selectedNumber == 9)
 	{
 		tile->removeAllGuesses();
+		tile->removeHighlight();
+		board->currentGrid[id / 9][id % 9] = 0;
 	}
 
 	else
 	{
-		tile->addGuess(getSelectedNumber() + 1);
+		tile->addGuess(selectedNumber + 1);
+		tile->highlightTile(selectedNumber + 1);
+		board->currentGrid[id / 9][id % 9] = selectedNumber + 1;
 	}
 }
 
 void MainWindow::processPress(QEvent* event)
 {
+	if (!m_timerRunning)
+	{
+		timer->startTimer();
+		m_timerRunning = true;
+	}
+
 	QMouseEvent* mouseEvent = static_cast<QMouseEvent*>(event);
 	Tile* tile = getTileUnderMouse(mouseEvent);
 
@@ -228,30 +242,69 @@ void MainWindow::processWheel(QEvent* event)
 
 void MainWindow::rightClick(Tile* tile)
 {
-	m_visitedTiles[tile->getId()] = true;
+	int id = tile->getId();
+	int selectedNumber = getSelectedNumber();
+	m_visitedTiles[id] = true;
 
-	if (getSelectedNumber() == 9)
+	if (selectedNumber == 9)
 	{
 		tile->removeAllGuesses();
+		tile->removeHighlight();
+		board->currentGrid[id / 9][id % 9] = 0;
 	}
 
 	else
 	{
-		tile->addGuess(getSelectedNumber() + 1);
+		tile->addGuess(selectedNumber+ 1);
+		tile->highlightTile(selectedNumber + 1);
+		board->currentGrid[id / 9][id % 9] = selectedNumber + 1;
 	}
 }
 
 void MainWindow::leftClick(Tile* tile)
 {
-	if (getSelectedNumber() == 9)
+	int id = tile->getId();
+	int selectedNumber = getSelectedNumber();
+
+	if (selectedNumber == 9)
 	{
 		tile->removeAllGuesses();
+		tile->removeHighlight();
+		board->currentGrid[id / 9][id % 9] = 0;
 	}
 
 	else
 	{
-		tile->addNumber(getSelectedNumber() + 1);
+		tile->addNumber(selectedNumber + 1);
+		tile->highlightTile(selectedNumber + 1);
+		board->currentGrid[id / 9][id % 9] = selectedNumber + 1;
 	}
+
+	qDebug() << checkForWin();
+}
+
+bool MainWindow::checkForWin()
+{
+	if ((int)std::count(board->currentGrid.begin(), board->currentGrid.end(), 0) > 0)
+	{
+		return false;
+	}
+
+	else
+		return true;
+
+	for (int i = 0; i < 81; i++)
+	{
+		int row = i / 9;
+		int col = i % 9;
+
+		if (!SudokuSolver::isLocationValid(board->currentGrid, row, col, board->currentGrid[row][col]))
+		{
+			return false;
+		}
+	}
+
+	return true;
 }
 
 Tile* MainWindow::getTileUnderMouse(QMouseEvent* mouseEvent)

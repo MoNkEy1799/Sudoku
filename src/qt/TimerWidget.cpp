@@ -29,9 +29,21 @@ TimerWidget::TimerWidget(int width, QWidget* parent)
     connect(m_timer, &QTimer::timeout, this, &TimerWidget::updateLabel);
 }
 
-void TimerWidget::startMyTimer()
+void TimerWidget::startTimer()
 {
+    updateLabel();
     m_timer->start(1000);
+}
+
+void TimerWidget::stopTimer()
+{
+    m_timer->stop();
+}
+
+void TimerWidget::resetTimer()
+{
+    m_totalSeconds = 0;
+    m_timeLabel->setText("0s ");
 }
 
 Time TimerWidget::getTime()

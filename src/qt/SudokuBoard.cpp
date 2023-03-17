@@ -1,6 +1,5 @@
 #include "SudokuBoard.h"
 #include "Tile.h"
-#include "../sudoku/SudokuSolver.h"
 #include "../sudoku/SudokuGenerator.h"
 
 #include <QWidget>
@@ -8,7 +7,7 @@
 #include <QLabel>
 
 SudokuBoard::SudokuBoard(QWidget* parent)
-	: QWidget(parent)
+	: QWidget(parent), currentGrid({ 0 })
 {
 	setContentsMargins(0, 0, 0, 0);
 
@@ -16,17 +15,11 @@ SudokuBoard::SudokuBoard(QWidget* parent)
 	m_layout->setSpacing(0);
 	m_layout->setAlignment(Qt::AlignCenter);
 
-	m_generator = new SudokuGenerator();
 	bool success = true;
-	m_setDifficulty = m_generator->generateRandomUniqueGrid(m_grid, success);
+	gridInfo = SudokuGenerator::generateRandomUniqueGrid(currentGrid, success);
 
 	createTiles();
 	fillBoard();
-}
-
-SudokuBoard::~SudokuBoard()
-{
-	delete m_generator;
 }
 
 void SudokuBoard::highlightTiles(int number)
@@ -55,12 +48,11 @@ void SudokuBoard::createTiles()
 			Tile* tile = new Tile(index, this, this);
 			m_tiles[index] = tile;
 
-			if (m_grid[i][j])
+			if (currentGrid[i][j])
 			{
-				tile->fixNumber(m_grid[i][j]);
+				tile->fixNumber(currentGrid[i][j]);
 				tile->installEventFilter(this);
 			}
-
 		}
 	}
 }
@@ -68,6 +60,7 @@ void SudokuBoard::createTiles()
 void SudokuBoard::fillBoard()
 {
 	int tileIndex = 0;
+
 	for (int i = 0; i < 17; i++)
 	{
 		for (int j = 0; j < 17; j++)

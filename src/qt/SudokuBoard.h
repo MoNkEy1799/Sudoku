@@ -1,4 +1,5 @@
 #pragma once
+
 #include "../sudoku/SudokuGenerator.h"
 
 #include <QWidget>
@@ -19,19 +20,18 @@ class SudokuBoard : public QWidget
 
 public:
 	SudokuBoard(QWidget* parent = nullptr);
-	~SudokuBoard();
 
 	void highlightTiles(int number);
 	void removeAllHighlights();
 
 	std::array<Tile*, 81>& getTiles() { return m_tiles; };
-	
+
+	SUDOKU_GRID currentGrid;
+	GridInfo gridInfo;
+		
 private:
 	std::array<Tile*, 81> m_tiles;
 	QGridLayout* m_layout;
-	SudokuGenerator* m_generator;
-	Difficulty m_setDifficulty;
-	SUDOKU_GRID m_grid;
 
 	void createTiles();
 	void fillBoard();

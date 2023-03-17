@@ -110,11 +110,11 @@ bool SudokuSolver::usedInBox(SUDOKU_GRID& grid, int row, int col, int num)
 
 bool SudokuSolver::isLocationValid(SUDOKU_GRID& grid, int row, int col, int num)
 {
-	bool rowSafe = usedInRow(grid, row, num);
-	bool colSafe = usedInCol(grid, col, num);
-	bool boxSafe = usedInBox(grid, row / 3, col / 3, num);
+	bool rowUnsafe = usedInRow(grid, row, num);
+	bool colUnsafe = usedInCol(grid, col, num);
+	bool boxUnsafe = usedInBox(grid, row / 3, col / 3, num);
 
-	return (!rowSafe && !colSafe && !boxSafe);
+	return (!rowUnsafe && !colUnsafe && !boxUnsafe);
 }
 
 bool SudokuSolver::solveSudoku(SUDOKU_GRID& grid, bool& success)
