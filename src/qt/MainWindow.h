@@ -44,6 +44,7 @@ private:
 	void leftClick(Tile* tile);
 
 	bool checkForWin();
+	int countUnfilledTiles();
 
 	int getSelectedNumber() { return m_currentNumber % (10 * m_scrollSpeed) / m_scrollSpeed; };
 

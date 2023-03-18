@@ -4,7 +4,6 @@
 #include "TimerWidget.h"
 #include "Tile.h"
 #include "Menu.h"
-#include "../sudoku/SudokuGenerator.h"
 #include "../sudoku/SudokuSolver.h"
 
 #include <QPushButton>
@@ -93,7 +92,6 @@ bool MainWindow::eventFilter(QObject* object, QEvent* event)
 		break;
 	}
 
-	//qDebug() << m_tilesLeft;
 	return false;
 }
 
@@ -257,7 +255,7 @@ void MainWindow::rightClick(Tile* tile)
 	{
 		tile->addGuess(selectedNumber+ 1);
 		tile->highlightTile(selectedNumber + 1);
-		board->currentGrid[id / 9][id % 9] = selectedNumber + 1;
+		board->currentGrid[id / 9][id % 9] = 0;
 	}
 }
 
@@ -285,13 +283,10 @@ void MainWindow::leftClick(Tile* tile)
 
 bool MainWindow::checkForWin()
 {
-	if ((int)std::count(board->currentGrid.begin(), board->currentGrid.end(), 0) > 0)
+	if (countUnfilledTiles() != 0)
 	{
 		return false;
 	}
-
-	else
-		return true;
 
 	for (int i = 0; i < 81; i++)
 	{
@@ -300,11 +295,25 @@ bool MainWindow::checkForWin()
 
 		if (!SudokuSolver::isLocationValid(board->currentGrid, row, col, board->currentGrid[row][col]))
 		{
+			SudokuSolver::printGrid(board->currentGrid);
+			qDebug() << i;
 			return false;
 		}
 	}
 
 	return true;
+}
+
+int MainWindow::countUnfilledTiles()
+{
+	int res = 0;
+
+	for (std::array<int, 9> row : board->currentGrid)
+	{
+		res += std::count(row.begin(), row.end(), 0);
+	}
+
+	return res;
 }
 
 Tile* MainWindow::getTileUnderMouse(QMouseEvent* mouseEvent)

@@ -15,8 +15,12 @@ SudokuBoard::SudokuBoard(QWidget* parent)
 	m_layout->setSpacing(0);
 	m_layout->setAlignment(Qt::AlignCenter);
 
-	bool success = true;
-	gridInfo = SudokuGenerator::generateRandomUniqueGrid(currentGrid, success);
+	bool success = false;
+	while (!success)
+	{
+		success = true;
+		gridInfo = SudokuGenerator::generateRandomUniqueGrid(currentGrid, success);
+	}
 
 	createTiles();
 	fillBoard();
