@@ -6,7 +6,7 @@ typedef std::array<std::array<int, 9>, 9> SUDOKU_GRID;
 
 class SudokuSolver;
 
-enum class Difficulty { EASY, MEDIUM, HARD };
+enum class Difficulty { NONE, EASY, MEDIUM, HARD };
 
 struct GridInfo
 {

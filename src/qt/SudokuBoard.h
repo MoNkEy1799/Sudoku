@@ -19,10 +19,11 @@ class SudokuBoard : public QWidget
 	Q_OBJECT
 
 public:
-	SudokuBoard(QWidget* parent = nullptr);
+	SudokuBoard(Difficulty difficulty, QWidget* parent = nullptr);
 
 	void highlightTiles(int number);
 	void removeAllHighlights();
+	bool isBoardFinished();
 
 	std::array<Tile*, 81>& getTiles() { return m_tiles; };
 

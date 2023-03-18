@@ -10,11 +10,10 @@ public:
 	SudokuSolver();
 
 	void solveAndPrint(SUDOKU_GRID grid, bool& success);
-	void solve(SUDOKU_GRID& grid, bool& success);
-	int countSolutions(SUDOKU_GRID grid, bool& success);
+	void solve(SUDOKU_GRID& grid, int solutionNumber, bool& success);
+	int countSolutions(SUDOKU_GRID grid, int solutionNumber, bool& success);
 
 	static void printGrid(SUDOKU_GRID& grid);
-	static bool isLocationValid(SUDOKU_GRID& grid, int row, int col, int num);
 
 private:
 	int m_solutionCounter, m_backtrackCounter;
@@ -23,5 +22,7 @@ private:
 	static bool usedInRow(SUDOKU_GRID& grid, int row, int num);
 	static bool usedInCol(SUDOKU_GRID& grid, int col, int num);
 	static bool usedInBox(SUDOKU_GRID& grid, int row, int col, int num);
-	bool solveSudoku(SUDOKU_GRID& grid, bool& success);
+	static bool isLocationValid(SUDOKU_GRID& grid, int row, int col, int num);
+
+	bool solveSudoku(SUDOKU_GRID& grid, int solutionNumber, bool& success);
 };

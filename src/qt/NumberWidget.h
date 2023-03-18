@@ -13,7 +13,7 @@ class NumberWidget : public QWidget
 public:
 	NumberWidget(int width, QWidget* parent = nullptr);
 
-	void setNumber(int number) { m_numbers[number]->setChecked(true); };
+	void setNumber(int index) { m_numbers[index]->setChecked(true); };
 
 private:
 	std::array<QPushButton*, 10> m_numbers;

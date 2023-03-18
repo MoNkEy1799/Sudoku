@@ -1,4 +1,5 @@
 #pragma once
+#include "../sudoku/SudokuGenerator.h"
 
 #include <QMainWindow>
 #include <QWidget>
@@ -21,17 +22,20 @@ public:
 	MainWindow();
 
 	void setMouseType(bool mouseType);
+	void createNewBoard(Difficulty difficulty);
 
-	SudokuBoard* board;
-	NumberWidget* numbers;
-	TimerWidget* timer;
-	Menu* menu;
+	SudokuBoard* board = nullptr;
+	NumberWidget* numbers = nullptr;
+	TimerWidget* timer = nullptr;
+	Menu* menu = nullptr;
 
 private:
 	bool m_timerRunning;
 	uint32_t m_currentNumber;
 	int m_direction, m_scrollSpeed;
 	std::array<bool, 81> m_visitedTiles;
+	QGridLayout* m_layout;
+	QWidget* m_centralWidget;
 
 	bool eventFilter(QObject* object, QEvent* event) override;
 	void selectNumberButton(QPushButton* pressedButton = nullptr, int number = 0);
@@ -45,6 +49,7 @@ private:
 
 	bool checkForWin();
 	int countUnfilledTiles();
+	void winGame();
 
 	int getSelectedNumber() { return m_currentNumber % (10 * m_scrollSpeed) / m_scrollSpeed; };
 
@@ -62,13 +67,16 @@ private:
 	const std::string hvrCol = "#515b73";
 	const std::string highCol = "#757575";
 	const std::string bdrCol = "#5a5a5a";
+	const std::string trpCol = "rgba(0, 0, 0, 0)";
 
 	const std::string sheet =
 		"QMainWindow {background: " + bgCol + "; }"
 		"QWidget {background: " + bgCol + ";}"
 		"QWidget#Tile {background: " + bgCol + ";}"
 
-		"QLabel {background: " + bgCol + "; color: " + txtCol + ";}"
+		"QLabel#Win {background: " + trpCol + "; color: " + txtCol + ";}"
+
+		"QLabel#Time {background: " + bgCol + "; color: " + txtCol + "; border: 1px solid " + txtCol + "}"
 
 		"QLabel#ThinLine {background: " + bdrCol + ";}"
 		"QLabel#ThickLine {background: " + txtCol + ";}"

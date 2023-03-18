@@ -11,7 +11,7 @@
 #include <tuple>
 #include <unordered_map>
 
-const std::unordered_map<int, std::array<int, 9>> Tile::m_idLookUp =
+const std::unordered_map<int, std::array<int, 9>> Tile::idLookUp =
 {
 	{ 0, { 0, 1, 2, 9, 10, 11, 18, 19, 20 } },
 	{ 1, { 3, 4, 5, 12, 13, 14, 21, 22, 23 } },
@@ -120,7 +120,7 @@ void Tile::updateInvolvedGuesses(int number)
 	int block = col / 3 + row / 3 * 3;
 
 	std::array<Tile*, 81>& tiles = m_board->getTiles();
-	const std::array<int, 9>& tilesInBlock = Tile::m_idLookUp.at(block);
+	const std::array<int, 9>& tilesInBlock = Tile::idLookUp.at(block);
 
 	for (int i = 0; i < 81; i++)
 	{

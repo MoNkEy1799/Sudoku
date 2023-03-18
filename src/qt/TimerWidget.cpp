@@ -17,8 +17,10 @@ TimerWidget::TimerWidget(int width, QWidget* parent)
     m_timer = new QTimer(this);
     m_timeLabel = new QLabel(this);
     m_timeLabel->setFont(font);
+    m_timeLabel->setFixedSize(160, 50);
     m_timeLabel->setAlignment(Qt::AlignCenter);
     m_timeLabel->setText("0s ");
+    m_timeLabel->setObjectName("Time");
 
     setMinimumHeight(100);
     setMaximumWidth(width);

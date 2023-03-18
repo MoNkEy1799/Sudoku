@@ -6,7 +6,9 @@
 #include <QGridLayout>
 #include <QLabel>
 
-SudokuBoard::SudokuBoard(QWidget* parent)
+#include <set>
+
+SudokuBoard::SudokuBoard(Difficulty difficulty, QWidget* parent)
 	: QWidget(parent), currentGrid({ 0 })
 {
 	setContentsMargins(0, 0, 0, 0);
@@ -16,10 +18,12 @@ SudokuBoard::SudokuBoard(QWidget* parent)
 	m_layout->setAlignment(Qt::AlignCenter);
 
 	bool success = false;
-	while (!success)
+	Difficulty currentDifficulty = Difficulty::NONE;
+
+	while (!success || currentDifficulty != difficulty)
 	{
-		success = true;
 		gridInfo = SudokuGenerator::generateRandomUniqueGrid(currentGrid, success);
+		currentDifficulty = gridInfo.difficultly;
 	}
 
 	createTiles();
@@ -40,6 +44,29 @@ void SudokuBoard::removeAllHighlights()
 	{
 		tile->removeHighlight();
 	}
+}
+
+bool SudokuBoard::isBoardFinished()
+{
+	for (int i = 0; i < 9; i++)
+	{
+		std::set<int> row, col, box;
+
+		for (int j = 0; j < 9; j++)
+		{
+			row.insert(currentGrid[i][j]);
+			col.insert(currentGrid[j][i]);
+			int index = m_tiles[0]->idLookUp.at(i)[j];
+			box.insert(currentGrid[index / 9][index % 9]);
+		}
+
+		if (row.size() < 9 || col.size() < 9 || box.size() < 9)
+		{
+			return false;
+		}
+	}
+
+	return true;
 }
 
 void SudokuBoard::createTiles()

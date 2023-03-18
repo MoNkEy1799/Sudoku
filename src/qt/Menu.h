@@ -1,4 +1,5 @@
 #pragma once
+#include "../sudoku/SudokuGenerator.h"
 
 #include <QMenuBar>
 #include <QMenu>
@@ -16,7 +17,9 @@ public:
 
 private:
 	QMenu* m_settings;
+	QMenu* m_highscore;
 	MainWindow* m_mainWindow;
 
 	void changeMouseType(bool type);
+	void newBoard(Difficulty difficulty);
 };

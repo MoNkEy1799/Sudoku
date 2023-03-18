@@ -9,8 +9,16 @@
 
 GridInfo SudokuGenerator::generateRandomUniqueGrid(SUDOKU_GRID& grid, bool& success)
 {
+	success = true;
+	grid = { 0 };
+
 	makeRandomGrid(grid, success);
 	removePositionsFromGrid(grid, success);
+
+	if (!success)
+	{
+		return GridInfo{ Difficulty::NONE, 0 };
+	}
 
 	uint32_t counter = 0;
 
@@ -61,7 +69,7 @@ void SudokuGenerator::makeRandomGrid(SUDOKU_GRID& grid, bool& success)
 	}
 
 	SudokuSolver solver;
-	solver.solve(grid, success);
+	solver.solve(grid, 0, success);
 }
 
 void SudokuGenerator::removePositionsFromGrid(SUDOKU_GRID& grid, bool& success)
@@ -78,7 +86,7 @@ void SudokuGenerator::removePositionsFromGrid(SUDOKU_GRID& grid, bool& success)
 		int previous = grid[pos / 9][pos % 9];
 		grid[pos / 9][pos % 9] = 0;
 
-		if (solver.countSolutions(grid, success) > 1)
+		if (solver.countSolutions(grid, 1, success) > 1)
 		{
 			grid[pos / 9][pos % 9] = previous;
 			break;

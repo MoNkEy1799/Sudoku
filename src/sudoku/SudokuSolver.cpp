@@ -13,23 +13,23 @@ void SudokuSolver::solveAndPrint(SUDOKU_GRID grid, bool& success)
 {
 	m_backtrackCounter = 0;
 
-	if (solveSudoku(grid, success))
+	if (solveSudoku(grid, 0, success))
 	{
 		printGrid(grid);
 	}
 }
 
-void SudokuSolver::solve(SUDOKU_GRID& grid, bool& success)
+void SudokuSolver::solve(SUDOKU_GRID& grid, int solutionNumber, bool& success)
 {
 	m_backtrackCounter = 0;
-	solveSudoku(grid, success);
+	solveSudoku(grid, solutionNumber, success);
 }
 
-int SudokuSolver::countSolutions(SUDOKU_GRID grid, bool& success)
+int SudokuSolver::countSolutions(SUDOKU_GRID grid, int solutionNumber, bool& success)
 {
 	m_backtrackCounter = 0;
 	m_solutionCounter = 0;
-	solveSudoku(grid, success);
+	solveSudoku(grid, solutionNumber, success);
 	return m_solutionCounter;
 }
 
@@ -50,14 +50,12 @@ void SudokuSolver::printGrid(SUDOKU_GRID& grid)
 
 bool SudokuSolver::findEmptyLocation(SUDOKU_GRID& grid, int& row, int& col)
 {
-	for (int i = 0; i < 9; i++)
+	for (row = 0; row < 9; row++)
 	{
-		for (int j = 0; j < 9; j++)
+		for (col = 0; col < 9; col++)
 		{
-			if (grid[i][j] == 0)
+			if (grid[row][col] == 0)
 			{
-				row = i;
-				col = j;
 				return true;
 			}
 		}
@@ -117,7 +115,7 @@ bool SudokuSolver::isLocationValid(SUDOKU_GRID& grid, int row, int col, int num)
 	return (!rowUnsafe && !colUnsafe && !boxUnsafe);
 }
 
-bool SudokuSolver::solveSudoku(SUDOKU_GRID& grid, bool& success)
+bool SudokuSolver::solveSudoku(SUDOKU_GRID& grid, int solutionNumber, bool& success)
 {
 	m_backtrackCounter++;
 
@@ -127,7 +125,7 @@ bool SudokuSolver::solveSudoku(SUDOKU_GRID& grid, bool& success)
 		return true;
 	}
 
-	if (m_solutionCounter > 1)
+	if (m_solutionCounter > solutionNumber)
 	{
 		return true;
 	}
@@ -146,7 +144,7 @@ bool SudokuSolver::solveSudoku(SUDOKU_GRID& grid, bool& success)
 		{
 			grid[row][col] = num;
 
-			if (solveSudoku(grid, success))
+			if (solveSudoku(grid, solutionNumber, success))
 			{
 				return true;
 			}

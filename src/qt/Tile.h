@@ -32,9 +32,10 @@ public:
 	TileState getState() { return m_state; };
 	QPushButton* getButton() { return m_innerCircle; };
 	QPushButton* getButtonHighlight() { return m_innerCircleHighlight; };
+	
+	const static std::unordered_map<int, std::array<int, 9>> idLookUp;
 
 private:
-	const static std::unordered_map<int, std::array<int, 9>> m_idLookUp;
 	template<class C, typename T>
 	static bool contains(C&& c, T e) { return std::find(std::begin(c), std::end(c), e) != std::end(c); };
 

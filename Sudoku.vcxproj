@@ -18,12 +18,14 @@
     <ClCompile Include="src\qt\SudokuBoard.cpp" />
     <ClCompile Include="src\qt\Tile.cpp" />
     <ClCompile Include="src\qt\TimerWidget.cpp" />
+    <ClCompile Include="src\qt\WinOverlay.cpp" />
     <ClCompile Include="src\sudoku\SudokuGenerator.cpp" />
     <ClCompile Include="src\sudoku\SudokuSolver.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\qt\MainWindow.h" />
     <QtMoc Include="src\qt\Menu.h" />
+    <QtMoc Include="src\qt\WinOverlay.h" />
     <ClInclude Include="src\sudoku\Random.h" />
     <ClInclude Include="src\sudoku\SudokuGenerator.h" />
     <ClInclude Include="src\sudoku\SudokuSolver.h" />
@@ -88,7 +90,7 @@
       <Optimization>Disabled</Optimization>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
@@ -100,7 +102,7 @@
       <Optimization>MaxSpeed</Optimization>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>false</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>

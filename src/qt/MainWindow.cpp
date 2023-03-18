@@ -4,12 +4,12 @@
 #include "TimerWidget.h"
 #include "Tile.h"
 #include "Menu.h"
+#include "WinOverlay.h"
 #include "../sudoku/SudokuSolver.h"
 
 #include <QPushButton>
 #include <QWidget>
 #include <QGridLayout>
-
 #include <QTimer>
 #include <QEvent>
 #include <QObject>
@@ -20,20 +20,77 @@
 #include <QHoverEvent>
 #include <QApplication>
 #include <QIcon>
+#include <QGraphicsBlurEffect>
 
 #include <string>
 #include <chrono>
 
 MainWindow::MainWindow()
-	: QMainWindow(), m_currentNumber(WHEEL_START), m_direction(-1), m_scrollSpeed(1), m_timerRunning(false), m_visitedTiles({ false })
+	: QMainWindow(), m_currentNumber(WHEEL_START), m_direction(-1), m_scrollSpeed(1),
+	m_timerRunning(false), m_visitedTiles({ false })
 {
-	QWidget* centralWidget = new QWidget(this);
-	QGridLayout* layout = new QGridLayout(centralWidget);
+	m_centralWidget = new QWidget(this);
+	m_layout = new QGridLayout(m_centralWidget);
 
-	board = new SudokuBoard(centralWidget);
-	numbers = new NumberWidget(445, centralWidget);
-	timer = new TimerWidget(445, centralWidget);
-	menu = new Menu(this, centralWidget);
+	numbers = new NumberWidget(445, m_centralWidget);
+	timer = new TimerWidget(445, m_centralWidget);
+	menu = new Menu(this, m_centralWidget);
+	createNewBoard(Difficulty::EASY);
+	WinOverlay* w = new WinOverlay(this, m_centralWidget);
+
+	//installEventFilter(this);
+	//board->installEventFilter(this);
+	//numbers->installEventFilter(this);
+	//timer->installEventFilter(this);
+
+	m_layout->setSpacing(0);
+	m_layout->setContentsMargins(0, 0, 0, 0);
+	m_layout->addWidget(timer, 0, 0);
+	m_layout->addWidget(numbers, 2, 0);
+
+	setStyleSheet(MainStyleSheet().getStyleSheet());
+	move(500, 50);
+	setMinimumWidth(600);
+	setCentralWidget(m_centralWidget);
+	setWindowIcon(QIcon("resources/icon.png"));
+	setWindowTitle("Sudoku Game");
+
+	for (QPushButton* button : numbers->findChildren<QPushButton*>())
+	{
+		connect(button, &QPushButton::clicked, timer, [this, button] { selectNumberButton(button, 0); });
+	}
+}
+
+void MainWindow::setMouseType(bool mouse)
+{
+	if (mouse)
+	{
+		m_direction = -1;
+		m_scrollSpeed = 1;
+	}
+
+	else
+	{
+		m_direction = 1;
+		m_scrollSpeed = 10;
+	}
+}
+
+void MainWindow::createNewBoard(Difficulty difficulty)
+{
+	if (board)
+	{
+		delete board;
+	}
+
+	if (timer)
+	{
+		timer->stopTimer();
+		timer->resetTimer();
+	}
+
+	board = new SudokuBoard(difficulty, m_centralWidget);
+	m_layout->addWidget(board, 1, 0);
 
 	for (Tile* tile : board->findChildren<Tile*>())
 	{
@@ -41,34 +98,8 @@ MainWindow::MainWindow()
 		tile->getButtonHighlight()->installEventFilter(this);
 	}
 
-	//installEventFilter(this);
-	//board->installEventFilter(this);
-	//numbers->installEventFilter(this);
-	//timer->installEventFilter(this);
-
-	layout->setSpacing(0);
-	layout->setContentsMargins(0, 0, 0, 0);
-	layout->addWidget(timer, 0, 0);
-	layout->addWidget(board, 1, 0);
-	layout->addWidget(numbers, 2, 0);
-
-	setStyleSheet(MainStyleSheet().getStyleSheet());
-	move(500, 50);
-	setMinimumWidth(600);
-	setCentralWidget(centralWidget);
-	setWindowIcon(QIcon("resources/icon.png"));
-	setWindowTitle("Sudoku Game");
-
-	for (QPushButton* button : numbers->findChildren<QPushButton*>())
-	{
-		connect(button, &QPushButton::clicked, timer, [this, button] { selectNumberButton(button, 0); });
-
-		if (button->text().contains("1"))
-		{
-			selectNumberButton(button);
-			button->setChecked(true);
-		}
-	}
+	selectNumberButton(nullptr, 1);
+	numbers->setNumber(0);
 }
 
 bool MainWindow::eventFilter(QObject* object, QEvent* event)
@@ -102,6 +133,7 @@ void MainWindow::selectNumberButton(QPushButton* pressedButton, int number)
 	if (!pressedButton)
 	{
 		numbers->setNumber(number - 1);
+
 		if (number < 10)
 		{
 			board->highlightTiles(number);
@@ -122,21 +154,6 @@ void MainWindow::selectNumberButton(QPushButton* pressedButton, int number)
 		}
 
 		m_currentNumber = WHEEL_START + (number - 1) * m_scrollSpeed;
-	}
-}
-
-void MainWindow::setMouseType(bool mouse)
-{
-	if (mouse)
-	{
-		m_direction = -1;
-		m_scrollSpeed = 1;
-	}
-
-	else
-	{
-		m_direction = 1;
-		m_scrollSpeed = 20;
 	}
 }
 
@@ -278,30 +295,20 @@ void MainWindow::leftClick(Tile* tile)
 		board->currentGrid[id / 9][id % 9] = selectedNumber + 1;
 	}
 
-	qDebug() << checkForWin();
+	if (checkForWin())
+	{
+		winGame();
+	}
 }
 
 bool MainWindow::checkForWin()
 {
-	if (countUnfilledTiles() != 0)
+	if (countUnfilledTiles() == 0 && board->isBoardFinished())
 	{
-		return false;
+		return true;
 	}
 
-	for (int i = 0; i < 81; i++)
-	{
-		int row = i / 9;
-		int col = i % 9;
-
-		if (!SudokuSolver::isLocationValid(board->currentGrid, row, col, board->currentGrid[row][col]))
-		{
-			SudokuSolver::printGrid(board->currentGrid);
-			qDebug() << i;
-			return false;
-		}
-	}
-
-	return true;
+	return false;
 }
 
 int MainWindow::countUnfilledTiles()
@@ -314,6 +321,10 @@ int MainWindow::countUnfilledTiles()
 	}
 
 	return res;
+}
+
+void MainWindow::winGame()
+{
 }
 
 Tile* MainWindow::getTileUnderMouse(QMouseEvent* mouseEvent)
