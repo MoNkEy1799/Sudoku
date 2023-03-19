@@ -15,10 +15,12 @@ class NumberWidget;
 class TimerWidget;
 class Tile;
 class Menu;
+class WinOverlay;
 
 class MainWindow : public QMainWindow
 {
 public:
+	void debug();
 	MainWindow();
 
 	void setMouseType(bool mouseType);
@@ -28,6 +30,7 @@ public:
 	NumberWidget* numbers = nullptr;
 	TimerWidget* timer = nullptr;
 	Menu* menu = nullptr;
+	WinOverlay* win = nullptr;
 
 private:
 	bool m_timerRunning;
@@ -67,7 +70,7 @@ private:
 	const std::string hvrCol = "#515b73";
 	const std::string highCol = "#757575";
 	const std::string bdrCol = "#5a5a5a";
-	const std::string trpCol = "rgba(0, 0, 0, 0)";
+	const std::string trpCol = "rgba(255, 255, 255, 50)";
 
 	const std::string sheet =
 		"QMainWindow {background: " + bgCol + "; }"

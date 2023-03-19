@@ -25,6 +25,11 @@
 #include <string>
 #include <chrono>
 
+void MainWindow::debug()
+{
+	winGame();
+}
+
 MainWindow::MainWindow()
 	: QMainWindow(), m_currentNumber(WHEEL_START), m_direction(-1), m_scrollSpeed(1),
 	m_timerRunning(false), m_visitedTiles({ false })
@@ -36,12 +41,18 @@ MainWindow::MainWindow()
 	timer = new TimerWidget(445, m_centralWidget);
 	menu = new Menu(this, m_centralWidget);
 	createNewBoard(Difficulty::EASY);
-	WinOverlay* w = new WinOverlay(this, m_centralWidget);
 
 	//installEventFilter(this);
 	//board->installEventFilter(this);
 	//numbers->installEventFilter(this);
 	//timer->installEventFilter(this);
+
+	/*
+	QPushButton* test = new QPushButton(m_centralWidget);
+	test->setStyleSheet("background: blue");
+	connect(test, &QPushButton::clicked, this, &MainWindow::debug);
+	m_layout->addWidget(test, 3, 0);
+	*/
 
 	m_layout->setSpacing(0);
 	m_layout->setContentsMargins(0, 0, 0, 0);
@@ -325,6 +336,14 @@ int MainWindow::countUnfilledTiles()
 
 void MainWindow::winGame()
 {
+	if (win)
+	{
+		delete win;
+	}
+
+	timer->stopTimer();
+	win = new WinOverlay(this, m_centralWidget);
+	m_layout->addWidget(win, 0, 0, 3, 1);
 }
 
 Tile* MainWindow::getTileUnderMouse(QMouseEvent* mouseEvent)

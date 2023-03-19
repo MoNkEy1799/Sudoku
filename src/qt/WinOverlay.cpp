@@ -1,12 +1,15 @@
 #include "WinOverlay.h"
 #include "MainWindow.h"
+#include "SudokuBoard.h"
+#include "NumberWidget.h"
+#include "TimerWidget.h"
 
 #include <QFont>
 #include <QWidget>
 #include <QPushButton>
 #include <QLabel>
 #include <QGridLayout>
-#include <QRect>
+#include <QSize>
 
 WinOverlay::WinOverlay(MainWindow* main, QWidget* parent)
 	: QWidget(parent), m_mainWindow(main)
@@ -19,8 +22,10 @@ WinOverlay::WinOverlay(MainWindow* main, QWidget* parent)
 	win->setFont(font);
 	win->setObjectName("Win");
 
-	setFixedSize(800, 800);
-	move(0, 20);
+	int time = m_mainWindow->timer->geometry().size().height();
+	int num = m_mainWindow->numbers->geometry().size().height();
+	int board = m_mainWindow->board->geometry().size().height();
+	setFixedHeight(time + num + board);
 
 	QGridLayout* layout = new QGridLayout(this);
 	layout->addWidget(win);
