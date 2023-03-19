@@ -39,11 +39,6 @@ Tile::Tile(int id, SudokuBoard* board, QWidget* parent)
 	m_innerCircleHighlight->setObjectName("TileHigh");
 	m_innerCircleHighlight->setCheckable(true);
 
-	m_fontSet = QFont("Sans-Serif", 15);
-	m_fontSet.setBold(true);
-	m_fontGuess = QFont("Sans-Serif", 8);
-	m_fontGuess.setBold(true);
-
 	setFixedSize(TILE_SIZE, TILE_SIZE);
 	setObjectName("Tile");
 	m_innerCircle->raise();
@@ -52,10 +47,10 @@ Tile::Tile(int id, SudokuBoard* board, QWidget* parent)
 void Tile::addGuess(int guess)
 {
 	m_state = TileState::GUESS;
-	m_innerCircle->setFont(m_fontGuess);
+	m_innerCircle->setFont(QFont("Sans-Serif", 8, QFont::Bold));
 	m_innerCircle->setStyleSheet("text-align: bottom");
 
-	m_innerCircleHighlight->setFont(m_fontGuess);
+	m_innerCircleHighlight->setFont(QFont("Sans-Serif", 8, QFont::Bold));
 	m_innerCircleHighlight->setStyleSheet("text-align: bottom");
 
 	int numberOfGuesses = std::count(m_guess.begin(), m_guess.end(), true);
@@ -104,11 +99,11 @@ void Tile::addNumber(int number)
 	removeAllGuesses();
 	updateInvolvedGuesses(number);
 
-	m_innerCircle->setFont(m_fontSet);
+	m_innerCircle->setFont(QFont("Sans-Serif", 15, QFont::Bold));
 	m_innerCircle->setStyleSheet("text-align: center");
 	m_innerCircle->setText(std::to_string(number).c_str());
 
-	m_innerCircleHighlight->setFont(m_fontSet);
+	m_innerCircleHighlight->setFont(QFont("Sans-Serif", 15, QFont::Bold));
 	m_innerCircleHighlight->setStyleSheet("text-align: center");
 	m_innerCircleHighlight->setText(std::to_string(number).c_str());
 }
@@ -140,11 +135,11 @@ void Tile::updateInvolvedGuesses(int number)
 void Tile::fixNumber(int number)
 {
 	m_state = TileState::FIXED;
-	m_innerCircle->setFont(m_fontSet);
+	m_innerCircle->setFont(QFont("Sans-Serif", 15, QFont::Bold));
 	m_innerCircle->setObjectName("TileFixed");
 	m_innerCircle->setText(std::to_string(number).c_str());
 
-	m_innerCircleHighlight->setFont(m_fontSet);
+	m_innerCircleHighlight->setFont(QFont("Sans-Serif", 15, QFont::Bold));
 	m_innerCircleHighlight->setText(std::to_string(number).c_str());
 }
 

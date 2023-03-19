@@ -40,7 +40,7 @@ MainWindow::MainWindow()
 	numbers = new NumberWidget(445, m_centralWidget);
 	timer = new TimerWidget(445, m_centralWidget);
 	menu = new Menu(this, m_centralWidget);
-	createNewBoard(Difficulty::EASY);
+	createNewBoard(Difficulty::HARD);
 
 	//installEventFilter(this);
 	//board->installEventFilter(this);
@@ -96,6 +96,7 @@ void MainWindow::createNewBoard(Difficulty difficulty)
 
 	if (timer)
 	{
+		m_timerRunning = false;
 		timer->stopTimer();
 		timer->resetTimer();
 		timer->setGraphicsEffect(nullptr);
@@ -344,14 +345,9 @@ int MainWindow::countUnfilledTiles()
 
 void MainWindow::winGame()
 {
-	if (win)
-	{
-		delete win;
-	}
-
-	timer->stopTimer();
 	win = new WinOverlay(this, m_centralWidget);
 	m_layout->addWidget(win, 0, 0, 3, 1, Qt::AlignBottom);
+	timer->stopTimer();
 	timer->setGraphicsEffect(new QGraphicsBlurEffect(this));
 	board->setGraphicsEffect(new QGraphicsBlurEffect(this));
 	numbers->setGraphicsEffect(new QGraphicsBlurEffect(this));

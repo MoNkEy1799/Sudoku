@@ -21,10 +21,12 @@ Menu::Menu(MainWindow* main, QWidget* parent)
 	QAction* easy = newGame->addAction("Easy");
 	QAction* medium = newGame->addAction("Medium");
 	QAction* hard = newGame->addAction("Hard");
+	QAction* extreme = newGame->addAction("Extreme");
 
 	connect(easy, &QAction::triggered, this, [this] { newBoard(Difficulty::EASY); });
 	connect(medium, &QAction::triggered, this, [this] { newBoard(Difficulty::MEDIUM); });
 	connect(hard, &QAction::triggered, this, [this] { newBoard(Difficulty::HARD); });
+	connect(extreme, &QAction::triggered, this, [this] { newBoard(Difficulty::EXTREME); });
 	
 	m_highscore = addMenu("Highscores");
 

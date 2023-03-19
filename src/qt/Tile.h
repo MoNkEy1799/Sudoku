@@ -46,7 +46,6 @@ private:
 	QPushButton* m_innerCircle;
 	QPushButton* m_innerCircleHighlight;
 	SudokuBoard* m_board;
-	QFont m_fontGuess, m_fontSet;
 
 	void displayGuess();
 

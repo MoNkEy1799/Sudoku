@@ -11,12 +11,9 @@
 TimerWidget::TimerWidget(int width, QWidget* parent)
     : QWidget(parent), m_totalSeconds(0), m_timer(nullptr)
 {
-    QFont font = QFont("Sans-Serif", 20);
-    font.setBold(true);
-
     m_timer = new QTimer(this);
     m_timeLabel = new QLabel(this);
-    m_timeLabel->setFont(font);
+    m_timeLabel->setFont(QFont("Sans-Serif", 20, QFont::Bold));
     m_timeLabel->setFixedSize(160, 50);
     m_timeLabel->setAlignment(Qt::AlignCenter);
     m_timeLabel->setText("0s ");
@@ -48,28 +45,26 @@ void TimerWidget::resetTimer()
     m_timeLabel->setText("0s ");
 }
 
-Time TimerWidget::getTime()
+std::string TimerWidget::getTime()
 {
-    return Time({ m_totalSeconds % 60, m_totalSeconds / 60 % 60, m_totalSeconds / 3600 });
+    std::string time;
+
+    if (m_totalSeconds / 3600 != 0)
+    {
+        time += std::to_string(m_totalSeconds / 3600) + "h ";
+    }
+
+    if (m_totalSeconds / 60 % 60 != 0)
+    {
+        time += std::to_string(m_totalSeconds / 60 % 60) + "m ";
+    }
+
+    time += std::to_string(m_totalSeconds % 60) + "s ";
+    return time;
 }
 
 void TimerWidget::updateLabel()
 {
-    Time currentTime = getTime();
-    std::string text = "";
-
-    if (currentTime.hours != 0)
-    {
-        text += std::to_string(currentTime.hours) + "h ";
-    }
-
-    if (currentTime.minutes != 0)
-    {
-        text += std::to_string(currentTime.minutes) + "m ";
-    }
-
-    text += std::to_string(currentTime.seconds) + "s ";
-    m_timeLabel->setText(text.c_str());
-
+    m_timeLabel->setText(getTime().c_str());
     m_totalSeconds++;
 }

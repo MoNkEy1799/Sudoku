@@ -35,14 +35,19 @@ GridInfo SudokuGenerator::generateRandomUniqueGrid(SUDOKU_GRID& grid, bool& succ
 		return GridInfo{ Difficulty::EASY, counter };
 	}
 
-	else if (counter <= 43)
+	else if (counter <= 40)
 	{
 		return GridInfo{ Difficulty::MEDIUM, counter };
 	}
 
-	else
+	else if (counter <= 55)
 	{
 		return GridInfo{ Difficulty::HARD, counter };
+	}
+
+	else
+	{
+		return GridInfo{ Difficulty::EXTREME, counter };
 	}
 }
 

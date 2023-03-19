@@ -15,16 +15,13 @@ NumberWidget::NumberWidget(int width, QWidget* parent)
 	setMinimumHeight(150);
 	setMaximumWidth(width);
 
-	QFont font = QFont("Sans-Serif", 16);
-	font.setBold(true);
-
 	QButtonGroup* group = new QButtonGroup(this);
 
 	for (int i = 0; i < 10; i++)
 	{
 		QPushButton* button = new QPushButton(std::to_string(i + 1).c_str(), this);
 		m_numbers[i] = button;
-		button->setFont(font);
+		button->setFont(QFont("Sans-Serif", 16, QFont::Bold));
 		button->setFixedSize(50, 50);
 		button->setObjectName("Number");
 		button->setCheckable(true);

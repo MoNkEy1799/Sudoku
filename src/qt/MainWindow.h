@@ -79,7 +79,7 @@ private:
 
 		"QLabel#Win {background: " + trpCol + "; color: " + txtCol + ";}"
 		"QWidget#Win {background: " + trpCol + ";}"
-		"QPushButton#Win {background: " + highCol + ";}"
+		"QPushButton#Win {background: #252525; color: " + txtCol + "; border: 1px solid " + txtCol + "; border-radius: 8;}"
 		"QPushButton#Win::hover {background: " + hvrCol + ";}"
 
 		"QLabel#Time {background: " + bgCol + "; color: " + txtCol + "; border: 1px solid " + txtCol + "}"
@@ -100,7 +100,7 @@ private:
 		"QPushButton#TileFixed {background: #303030; color: " + bgCol + "; border-radius: 20;}"
 		"QPushButton#TileFixed::hover {background: " + hvrCol + "; color: " + bgCol + ";}"
 
-		"QMenuBar::item {background: " + "#303030" + "}"
-		"QMenu::item {background: " + "#303030" + "}"
-		"QMenu::item::hover {background: " + hvrCol + "}";
+		"QMenuBar::item {background: " + "#303030" + ";}"
+		"QMenu::item {background: " + "#303030" + ";}"
+		"QMenu::item::hover {background: " + hvrCol + ";}";
 };
