@@ -70,7 +70,7 @@ private:
 	const std::string hvrCol = "#515b73";
 	const std::string highCol = "#757575";
 	const std::string bdrCol = "#5a5a5a";
-	const std::string trpCol = "rgba(255, 255, 255, 50)";
+	const std::string trpCol = "rgba(255, 255, 255, 0)";
 
 	const std::string sheet =
 		"QMainWindow {background: " + bgCol + "; }"
@@ -78,6 +78,9 @@ private:
 		"QWidget#Tile {background: " + bgCol + ";}"
 
 		"QLabel#Win {background: " + trpCol + "; color: " + txtCol + ";}"
+		"QWidget#Win {background: " + trpCol + ";}"
+		"QPushButton#Win {background: " + highCol + ";}"
+		"QPushButton#Win::hover {background: " + hvrCol + ";}"
 
 		"QLabel#Time {background: " + bgCol + "; color: " + txtCol + "; border: 1px solid " + txtCol + "}"
 
@@ -98,5 +101,6 @@ private:
 		"QPushButton#TileFixed::hover {background: " + hvrCol + "; color: " + bgCol + ";}"
 
 		"QMenuBar::item {background: " + "#303030" + "}"
-		"QMenuBar::item::hover {background: " + hvrCol + "}";
+		"QMenu::item {background: " + "#303030" + "}"
+		"QMenu::item::hover {background: " + hvrCol + "}";
 };

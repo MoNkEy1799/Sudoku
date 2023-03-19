@@ -98,6 +98,13 @@ void MainWindow::createNewBoard(Difficulty difficulty)
 	{
 		timer->stopTimer();
 		timer->resetTimer();
+		timer->setGraphicsEffect(nullptr);
+	}
+
+	if (win)
+	{
+		delete win;
+		win = nullptr;
 	}
 
 	board = new SudokuBoard(difficulty, m_centralWidget);
@@ -111,6 +118,7 @@ void MainWindow::createNewBoard(Difficulty difficulty)
 
 	selectNumberButton(nullptr, 1);
 	numbers->setNumber(0);
+	numbers->setGraphicsEffect(nullptr);
 }
 
 bool MainWindow::eventFilter(QObject* object, QEvent* event)
@@ -343,7 +351,10 @@ void MainWindow::winGame()
 
 	timer->stopTimer();
 	win = new WinOverlay(this, m_centralWidget);
-	m_layout->addWidget(win, 0, 0, 3, 1);
+	m_layout->addWidget(win, 0, 0, 3, 1, Qt::AlignBottom);
+	timer->setGraphicsEffect(new QGraphicsBlurEffect(this));
+	board->setGraphicsEffect(new QGraphicsBlurEffect(this));
+	numbers->setGraphicsEffect(new QGraphicsBlurEffect(this));
 }
 
 Tile* MainWindow::getTileUnderMouse(QMouseEvent* mouseEvent)

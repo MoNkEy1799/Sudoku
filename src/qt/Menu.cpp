@@ -14,21 +14,24 @@ Menu::Menu(MainWindow* main, QWidget* parent)
 	QAction* mouse = mouseType->addAction("Mouse");
 	QAction* touchpad = mouseType->addAction("Touchpad");
 
+	connect(mouse, &QAction::triggered, this, [this] { changeMouseType(true); });
+	connect(touchpad, &QAction::triggered, this, [this] { changeMouseType(false); });
+
 	QMenu* newGame = m_settings->addMenu("New Game");
 	QAction* easy = newGame->addAction("Easy");
 	QAction* medium = newGame->addAction("Medium");
 	QAction* hard = newGame->addAction("Hard");
 
-	connect(mouse, &QAction::triggered, this, [this] { changeMouseType(true); });
-	connect(touchpad, &QAction::triggered, this, [this] { changeMouseType(false); });
-
 	connect(easy, &QAction::triggered, this, [this] { newBoard(Difficulty::EASY); });
 	connect(medium, &QAction::triggered, this, [this] { newBoard(Difficulty::MEDIUM); });
 	connect(hard, &QAction::triggered, this, [this] { newBoard(Difficulty::HARD); });
-
+	
 	m_highscore = addMenu("Highscores");
 
-	setStyleSheet("QMenu::item {background: #505050}");
+	QAction* debug = addAction("Debug");
+	connect(debug, &QAction::triggered, m_mainWindow, &MainWindow::debug);
+
+	//setStyleSheet("QMenu::item {background: #505050}");
 	setMinimumWidth(400);
 }
 
