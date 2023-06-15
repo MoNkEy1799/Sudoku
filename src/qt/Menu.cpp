@@ -33,8 +33,7 @@ Menu::Menu(MainWindow* main, QWidget* parent)
 	QAction* debug = addAction("Debug");
 	connect(debug, &QAction::triggered, m_mainWindow, &MainWindow::debug);
 
-	//setStyleSheet("QMenu::item {background: #505050}");
-	setMinimumWidth(400);
+	setMinimumWidth(2000);
 }
 
 void Menu::changeMouseType(bool type)

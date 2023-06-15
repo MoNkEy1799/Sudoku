@@ -12,6 +12,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Main.cpp" />
+    <ClCompile Include="src\qt\Highscores.cpp" />
     <ClCompile Include="src\qt\MainWindow.cpp" />
     <ClCompile Include="src\qt\Menu.cpp" />
     <ClCompile Include="src\qt\NumberWidget.cpp" />
@@ -23,6 +24,7 @@
     <ClCompile Include="src\sudoku\SudokuSolver.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\qt\Highscores.h" />
     <ClInclude Include="src\qt\MainWindow.h" />
     <QtMoc Include="src\qt\Menu.h" />
     <QtMoc Include="src\qt\WinOverlay.h" />
@@ -33,6 +35,13 @@
     <QtMoc Include="src\qt\Tile.h" />
     <QtMoc Include="src\qt\SudokuBoard.h" />
     <QtMoc Include="src\qt\NumberWidget.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="resources\icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="saves\highscores.txt" />
+    <Text Include="saves\highscores_reset.txt" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{A8CAF95C-88CF-448E-BBAC-3186C0C1C801}</ProjectGuid>

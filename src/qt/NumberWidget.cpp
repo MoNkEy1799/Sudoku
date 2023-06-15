@@ -16,7 +16,6 @@ NumberWidget::NumberWidget(int width, QWidget* parent)
 	setMaximumWidth(width);
 
 	QButtonGroup* group = new QButtonGroup(this);
-
 	for (int i = 0; i < 10; i++)
 	{
 		QPushButton* button = new QPushButton(std::to_string(i + 1).c_str(), this);
@@ -31,12 +30,10 @@ NumberWidget::NumberWidget(int width, QWidget* parent)
 		{
 			m_layout->addWidget(button, 0, i);
 		}
-
 		else if (i < 9)
 		{
 			m_layout->addWidget(button, 1, i - 5);
 		}
-
 		else
 		{
 			button->setText("X");

@@ -47,13 +47,6 @@ MainWindow::MainWindow()
 	//numbers->installEventFilter(this);
 	//timer->installEventFilter(this);
 
-	/*
-	QPushButton* test = new QPushButton(m_centralWidget);
-	test->setStyleSheet("background: blue");
-	connect(test, &QPushButton::clicked, this, &MainWindow::debug);
-	m_layout->addWidget(test, 3, 0);
-	*/
-
 	m_layout->setSpacing(0);
 	m_layout->setContentsMargins(0, 0, 0, 0);
 	m_layout->addWidget(timer, 0, 0);
@@ -149,30 +142,25 @@ bool MainWindow::eventFilter(QObject* object, QEvent* event)
 void MainWindow::selectNumberButton(QPushButton* pressedButton, int number)
 {
 	board->removeAllHighlights();
-
 	if (!pressedButton)
 	{
 		numbers->setNumber(number - 1);
-
 		if (number < 10)
 		{
 			board->highlightTiles(number);
 		}
 	}
-
 	else
 	{
 		if (pressedButton->text().contains("X"))
 		{
 			number = 10;
 		}
-
 		else
 		{
 			number = std::stoi(pressedButton->text().toStdString());
 			board->highlightTiles(number);
 		}
-
 		m_currentNumber = WHEEL_START + (number - 1) * m_scrollSpeed;
 	}
 }
@@ -181,22 +169,17 @@ void MainWindow::processHold(QEvent* event)
 {
 	QMouseEvent* mouseEvent = static_cast<QMouseEvent*>(event);
 	Qt::MouseButtons buttons = mouseEvent->buttons();
-
 	if (buttons != Qt::RightButton || buttons == Qt::LeftButton)
 	{
 		return;
 	}
 
 	Tile* tile = getTileUnderMouse(mouseEvent);
-
 	if (!tile || tile->getState() == TileState::FIXED)
 	{
 		return;
 	}
-
-	bool visited = m_visitedTiles[tile->getId()];
-
-	if (visited)
+	if (m_visitedTiles[tile->getId()])
 	{
 		return;
 	}
@@ -211,7 +194,6 @@ void MainWindow::processHold(QEvent* event)
 		tile->removeHighlight();
 		board->currentGrid[id / 9][id % 9] = 0;
 	}
-
 	else
 	{
 		tile->addGuess(selectedNumber + 1);
@@ -230,7 +212,6 @@ void MainWindow::processPress(QEvent* event)
 
 	QMouseEvent* mouseEvent = static_cast<QMouseEvent*>(event);
 	Tile* tile = getTileUnderMouse(mouseEvent);
-
 	if (!tile || tile->getState() == TileState::FIXED)
 	{
 		return;
@@ -251,7 +232,6 @@ void MainWindow::processPress(QEvent* event)
 void MainWindow::processRelease(QEvent* event)
 {
 	QMouseEvent* mouseEvent = static_cast<QMouseEvent*>(event);
-
 	if (mouseEvent->buttons() == Qt::NoButton)
 	{
 		m_visitedTiles = { false };
@@ -261,17 +241,14 @@ void MainWindow::processRelease(QEvent* event)
 void MainWindow::processWheel(QEvent* event)
 {
 	QWheelEvent* wheelEvent = static_cast<QWheelEvent*>(event);
-
 	if (m_direction * wheelEvent->angleDelta().y() > 0)
 	{
 		m_currentNumber--;
 	}
-
 	else
 	{
 		m_currentNumber++;
 	}
-
 	selectNumberButton(nullptr, getSelectedNumber() + 1);
 }
 
@@ -287,7 +264,6 @@ void MainWindow::rightClick(Tile* tile)
 		tile->removeHighlight();
 		board->currentGrid[id / 9][id % 9] = 0;
 	}
-
 	else
 	{
 		tile->addGuess(selectedNumber+ 1);
@@ -300,14 +276,12 @@ void MainWindow::leftClick(Tile* tile)
 {
 	int id = tile->getId();
 	int selectedNumber = getSelectedNumber();
-
 	if (selectedNumber == 9)
 	{
 		tile->removeAllGuesses();
 		tile->removeHighlight();
 		board->currentGrid[id / 9][id % 9] = 0;
 	}
-
 	else
 	{
 		tile->addNumber(selectedNumber + 1);
@@ -323,23 +297,16 @@ void MainWindow::leftClick(Tile* tile)
 
 bool MainWindow::checkForWin()
 {
-	if (countUnfilledTiles() == 0 && board->isBoardFinished())
-	{
-		return true;
-	}
-
-	return false;
+	return (countUnfilledTiles() == 0 && board->isBoardFinished());
 }
 
 int MainWindow::countUnfilledTiles()
 {
 	int res = 0;
-
 	for (std::array<int, 9> row : board->currentGrid)
 	{
 		res += std::count(row.begin(), row.end(), 0);
 	}
-
 	return res;
 }
 
@@ -357,17 +324,14 @@ Tile* MainWindow::getTileUnderMouse(QMouseEvent* mouseEvent)
 {
 	QPoint pos = mouseEvent->globalPos();
 	std::array<Tile*, 81>& tiles = board->getTiles();
-
 	for (int i = 0; i < 81; i++)
 	{
 		QRect local = tiles[i]->geometry();
 		QRect global = QRect(board->mapToGlobal(local.topLeft()), local.size());
-
 		if (global.contains(pos))
 		{
 			return tiles[i];
 		}
 	}
-
 	return nullptr;
 }

@@ -100,7 +100,8 @@ private:
 		"QPushButton#TileFixed {background: #303030; color: " + bgCol + "; border-radius: 20;}"
 		"QPushButton#TileFixed::hover {background: " + hvrCol + "; color: " + bgCol + ";}"
 
-		"QMenuBar::item {background: " + "#303030" + ";}"
-		"QMenu::item {background: " + "#303030" + ";}"
-		"QMenu::item::hover {background: " + hvrCol + ";}";
+		"QMenuBar {background: " + "#303030" + ";}"
+		"QMenuBar::item::selected {background: " + "#505050" + ";}"
+		"QMenu {background: " + highCol + ";}"
+		"QMenu::item::selected {background: " + hvrCol + ";}";
 };

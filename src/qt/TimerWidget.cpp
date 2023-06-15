@@ -21,10 +21,8 @@ TimerWidget::TimerWidget(int width, QWidget* parent)
 
     setMinimumHeight(100);
     setMaximumWidth(width);
-
     QGridLayout* layout = new QGridLayout(this);
     layout->addWidget(m_timeLabel);
-
     connect(m_timer, &QTimer::timeout, this, &TimerWidget::updateLabel);
 }
 
@@ -48,17 +46,14 @@ void TimerWidget::resetTimer()
 std::string TimerWidget::getTime()
 {
     std::string time;
-
     if (m_totalSeconds / 3600 != 0)
     {
         time += std::to_string(m_totalSeconds / 3600) + "h ";
     }
-
     if (m_totalSeconds / 60 % 60 != 0)
     {
         time += std::to_string(m_totalSeconds / 60 % 60) + "m ";
     }
-
     time += std::to_string(m_totalSeconds % 60) + "s ";
     return time;
 }

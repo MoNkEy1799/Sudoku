@@ -55,35 +55,29 @@ void Tile::addGuess(int guess)
 
 	int numberOfGuesses = std::count(m_guess.begin(), m_guess.end(), true);
 	int index = guess - 1;
-
 	if (inGuess(index))
 	{
 		m_guess[index] = false;
 		removeHighlight();
 	}
-
 	else if (!inGuess(index) && numberOfGuesses < 8)
 	{
 		m_guess[index] = true;
 	}
-
 	else
 	{
 		return;
 	}
-
 	displayGuess();
 }
 
 void Tile::removeGuess(int guess)
 {
 	int index = guess - 1;
-
 	if (inGuess(index))
 	{
 		m_guess[index] = false;
 	}
-
 	displayGuess();
 }
 
@@ -116,14 +110,12 @@ void Tile::updateInvolvedGuesses(int number)
 
 	std::array<Tile*, 81>& tiles = m_board->getTiles();
 	const std::array<int, 9>& tilesInBlock = Tile::idLookUp.at(block);
-
 	for (int i = 0; i < 81; i++)
 	{
 		if (i == m_id || tiles[i]->getState() == TileState::SET || tiles[i]->getState() == TileState::FIXED)
 		{
 			continue;
 		}
-
 		if (i % 9 == col || i / 9 == row || Tile::contains(tilesInBlock, i))
 		{
 			tiles[i]->removeGuess(number);
@@ -149,7 +141,6 @@ void Tile::highlightTile(int number)
 	{
 		m_innerCircleHighlight->raise();
 	}
-
 	else if (m_state == TileState::GUESS && m_guess[number - 1])
 	{
 		m_innerCircleHighlight->raise();
@@ -164,7 +155,6 @@ void Tile::removeHighlight()
 void Tile::displayGuess()
 {
 	int numberOfGuesses = std::count(m_guess.begin(), m_guess.end(), true);
-
 	if (numberOfGuesses == 0)
 	{
 		m_innerCircle->setText("");
@@ -173,31 +163,26 @@ void Tile::displayGuess()
 	}
 
 	std::array<int, 2> alignment;
-
 	if (numberOfGuesses <= 2)
 	{
 		alignment = { 0, 0};
 	}
-
 	else if (numberOfGuesses >= 3 && numberOfGuesses <= 6)
 	{
 		alignment = { 0, numberOfGuesses - 2};
 	}
-
 	else
 	{
 		alignment = { numberOfGuesses - 6, 4};
 	}
 
 	std::string text;
-
 	for (int i = 0; i < 9; i++)
 	{
 		if (!m_guess[i])
 		{
 			continue;
 		}
-
 		text += std::to_string(i + 1) + " ";
 	}
 
@@ -210,7 +195,6 @@ void Tile::displayGuess()
 		{
 			continue;
 		}
-
 		lastPos += 2 * a;
 		text.replace(lastPos - 1, 1, "\n");
 	}
