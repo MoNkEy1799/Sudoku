@@ -30,21 +30,19 @@ GridInfo SudokuGenerator::generateRandomUniqueGrid(SUDOKU_GRID& grid, bool& succ
 		}
 	}
 
+	std::cout << counter << std::endl;
 	if (counter <= 22)
 	{
 		return GridInfo{ Difficulty::EASY, counter };
 	}
-
 	else if (counter <= 40)
 	{
 		return GridInfo{ Difficulty::MEDIUM, counter };
 	}
-
 	else if (counter <= 55)
 	{
 		return GridInfo{ Difficulty::HARD, counter };
 	}
-
 	else
 	{
 		return GridInfo{ Difficulty::EXTREME, counter };
@@ -90,7 +88,6 @@ void SudokuGenerator::removePositionsFromGrid(SUDOKU_GRID& grid, bool& success)
 	{
 		int previous = grid[pos / 9][pos % 9];
 		grid[pos / 9][pos % 9] = 0;
-
 		if (solver.countSolutions(grid, 1, success) > 1)
 		{
 			grid[pos / 9][pos % 9] = previous;

@@ -7,6 +7,10 @@
 #include <QLabel>
 
 #include <set>
+#include <thread>
+#include <atomic>
+
+std::atomic<bool> SudokuBoard::m_boardFound = false;
 
 SudokuBoard::SudokuBoard(Difficulty difficulty, QWidget* parent)
 	: QWidget(parent), currentGrid({ 0 })
@@ -15,14 +19,6 @@ SudokuBoard::SudokuBoard(Difficulty difficulty, QWidget* parent)
 	m_layout = new QGridLayout(this);
 	m_layout->setSpacing(0);
 	m_layout->setAlignment(Qt::AlignCenter);
-
-	bool success = false;
-	Difficulty currentDifficulty = Difficulty::NONE;
-	while (!success || currentDifficulty != difficulty)
-	{
-		gridInfo = SudokuGenerator::generateRandomUniqueGrid(currentGrid, success);
-		currentDifficulty = gridInfo.difficultly;
-	}
 
 	createTiles();
 	fillBoard();
@@ -115,6 +111,21 @@ void SudokuBoard::fillBoard()
 				m_layout->addWidget(line, i, j, Qt::AlignCenter);
 			}
 		}
+	}
+}
+
+void SudokuBoard::checkForGrid(Difficulty difficulty, SUDOKU_GRID grid, GridInfo gridInfo)
+{
+	bool success = false;
+	Difficulty currentDifficulty = Difficulty::NONE;
+	while (!success || currentDifficulty != difficulty)
+	{
+		if (m_boardFound)
+		{
+			return;
+		}
+		gridInfo = SudokuGenerator::generateRandomUniqueGrid(grid, success);
+		currentDifficulty = gridInfo.difficultly;
 	}
 }
 

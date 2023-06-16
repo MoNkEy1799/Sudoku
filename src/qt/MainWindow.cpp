@@ -40,12 +40,8 @@ MainWindow::MainWindow()
 	numbers = new NumberWidget(445, m_centralWidget);
 	timer = new TimerWidget(445, m_centralWidget);
 	menu = new Menu(this, m_centralWidget);
+	setMenuBar(menu);
 	createNewBoard(Difficulty::HARD);
-
-	//installEventFilter(this);
-	//board->installEventFilter(this);
-	//numbers->installEventFilter(this);
-	//timer->installEventFilter(this);
 
 	m_layout->setSpacing(0);
 	m_layout->setContentsMargins(0, 0, 0, 0);
