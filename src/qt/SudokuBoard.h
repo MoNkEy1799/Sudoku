@@ -42,8 +42,9 @@ private:
 	void createTiles();
 	void fillBoard();
 	
+	static std::atomic<int> m_threadID;
 	static std::atomic<bool> m_boardFound;
-	static void checkForGrid(Difficulty difficulty, SUDOKU_GRID grid, GridInfo gridInfo);
+	static void checkForGrid(int id, Difficulty difficulty, SUDOKU_GRID grid, GridInfo gridInfo);
 };
 
 enum class LineStyle {HTHIN, VTHIN, HTHICK, VTHICK};

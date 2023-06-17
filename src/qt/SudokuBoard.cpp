@@ -11,6 +11,7 @@
 #include <atomic>
 
 std::atomic<bool> SudokuBoard::m_boardFound = false;
+std::atomic<int> SudokuBoard::m_threadID = -1;
 
 SudokuBoard::SudokuBoard(Difficulty difficulty, QWidget* parent)
 	: QWidget(parent), currentGrid({ 0 })
@@ -19,6 +20,37 @@ SudokuBoard::SudokuBoard(Difficulty difficulty, QWidget* parent)
 	m_layout = new QGridLayout(this);
 	m_layout->setSpacing(0);
 	m_layout->setAlignment(Qt::AlignCenter);
+
+	if (difficulty == Difficulty::HARD)
+	{
+		for (int id = 0; id < 5; id++)
+		{
+			m_threads[id] = std::thread(SudokuBoard::checkForGrid, id, difficulty, m_threadGrids[id], m_threadInfos[id]);
+		}
+		for (int id = 0; id < 5; id++)
+		{
+			m_threads[id].join();
+		}
+		currentGrid = m_threadGrids[m_threadID];
+		gridInfo = m_threadInfos[m_threadID];
+	}
+	else if (difficulty == Difficulty::EXTREME)
+	{
+		for (int id = 0; id < 20; id++)
+		{
+			m_threads[id] = std::thread(SudokuBoard::checkForGrid, difficulty, id, m_threadGrids[id], m_threadInfos[id]);
+		}
+		for (int id = 0; id < 20; id++)
+		{
+			m_threads[id].join();
+		}
+		currentGrid = m_threadGrids[m_threadID];
+		gridInfo = m_threadInfos[m_threadID];
+	}
+	else
+	{
+		checkForGrid(0, difficulty, currentGrid, gridInfo);
+	}
 
 	createTiles();
 	fillBoard();
@@ -114,7 +146,7 @@ void SudokuBoard::fillBoard()
 	}
 }
 
-void SudokuBoard::checkForGrid(Difficulty difficulty, SUDOKU_GRID grid, GridInfo gridInfo)
+void SudokuBoard::checkForGrid(int id, Difficulty difficulty, SUDOKU_GRID grid, GridInfo gridInfo)
 {
 	bool success = false;
 	Difficulty currentDifficulty = Difficulty::NONE;
@@ -127,6 +159,8 @@ void SudokuBoard::checkForGrid(Difficulty difficulty, SUDOKU_GRID grid, GridInfo
 		gridInfo = SudokuGenerator::generateRandomUniqueGrid(grid, success);
 		currentDifficulty = gridInfo.difficultly;
 	}
+	m_boardFound = true;
+	m_threadID = id;
 }
 
 FillLine::FillLine(QWidget* parent, LineStyle lineStyle)

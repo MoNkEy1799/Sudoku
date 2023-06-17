@@ -41,7 +41,7 @@ MainWindow::MainWindow()
 	timer = new TimerWidget(445, m_centralWidget);
 	menu = new Menu(this, m_centralWidget);
 	setMenuBar(menu);
-	createNewBoard(Difficulty::HARD);
+	createNewBoard(Difficulty::EASY);
 
 	m_layout->setSpacing(0);
 	m_layout->setContentsMargins(0, 0, 0, 0);
