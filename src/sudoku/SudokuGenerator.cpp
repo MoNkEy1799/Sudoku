@@ -7,21 +7,20 @@
 #include <numeric>
 #include <iostream>
 
-GridInfo SudokuGenerator::generateRandomUniqueGrid(SUDOKU_GRID& grid, bool& success)
+GridInfo SudokuGenerator::generateRandomUniqueGrid(SUDOKU_GRID& grid)
 {
-	success = true;
+	bool limitHit = false;
 	grid = { 0 };
 
-	makeRandomGrid(grid, success);
-	removePositionsFromGrid(grid, success);
+	makeRandomGrid(grid, limitHit);
+	removePositionsFromGrid(grid, limitHit);
 
-	if (!success)
+	if (limitHit)
 	{
 		return GridInfo{ Difficulty::NONE, 0 };
 	}
 
 	uint32_t counter = 0;
-
 	for (int i = 0; i < 81; i++)
 	{
 		if (grid[i / 9][i % 9] == 0)
@@ -29,8 +28,6 @@ GridInfo SudokuGenerator::generateRandomUniqueGrid(SUDOKU_GRID& grid, bool& succ
 			counter++;
 		}
 	}
-
-	std::cout << counter << std::endl;
 	if (counter <= 22)
 	{
 		return GridInfo{ Difficulty::EASY, counter };
@@ -49,11 +46,59 @@ GridInfo SudokuGenerator::generateRandomUniqueGrid(SUDOKU_GRID& grid, bool& succ
 	}
 }
 
-void SudokuGenerator::makeRandomGrid(SUDOKU_GRID& grid, bool& success)
+void SudokuGenerator::scrambleSeedGrid(SUDOKU_GRID& grid)
 {
-	std::array<std::array<int, 9>, 3> numBlocks;
+	reshuffleNumber(grid);
+	rotate90(grid);
+	flipAxis(grid);
+}
+
+void SudokuGenerator::reshuffleNumber(SUDOKU_GRID& grid)
+{
 	Random random;
+	std::array<int, 9> shuffle;
+	std::iota(shuffle.begin(), shuffle.end(), 1);
+	std::shuffle(shuffle.begin(), shuffle.end(), random.getEngine());
 	
+	for (int row = 0; row < 9; row++)
+	{
+		for (int col = 0; col < 9; col++)
+		{
+			int number = grid[row][col];
+			if (number)
+			{
+				grid[row][col] = shuffle[number - 1];
+			}
+		}
+	}
+}
+
+void SudokuGenerator::rotate90(SUDOKU_GRID& grid)
+{
+	Random random;
+	SUDOKU_GRID temp;
+	int times = random.randInt(0, 3);
+	for (int i = 0; i < times; i++)
+	{
+		for (int row = 0; row < 9; row++)
+		{
+			for (int col = 0; col < 9; col++)
+			{
+				temp[col][8 - row] = grid[row][col];
+			}
+		}
+		grid = temp;
+	}
+}
+
+void SudokuGenerator::flipAxis(SUDOKU_GRID& grid)
+{
+}
+
+void SudokuGenerator::makeRandomGrid(SUDOKU_GRID& grid, bool& limitHit)
+{
+	Random random;
+	std::array<std::array<int, 9>, 3> numBlocks;
 	for (int i = 0; i < 3; i++)
 	{
 		std::iota(numBlocks[i].begin(), numBlocks[i].end(), 1);
@@ -70,25 +115,23 @@ void SudokuGenerator::makeRandomGrid(SUDOKU_GRID& grid, bool& success)
 			grid[i + 6][j + 6] = numBlocks[2][index];
 		}
 	}
-
 	SudokuSolver solver;
-	solver.solve(grid, 0, success);
+	solver.simpleSolve(grid, limitHit);
 }
 
-void SudokuGenerator::removePositionsFromGrid(SUDOKU_GRID& grid, bool& success)
+void SudokuGenerator::removePositionsFromGrid(SUDOKU_GRID& grid, bool& limitHit)
 {
 	Random random;
-	SudokuSolver solver;
+	SudokuSolver solver(0);
 
 	std::array<int, 81> positions;
 	std::iota(positions.begin(), positions.end(), 0);
 	std::shuffle(positions.begin(), positions.end(), random.getEngine());
-
 	for (int pos : positions)
 	{
 		int previous = grid[pos / 9][pos % 9];
 		grid[pos / 9][pos % 9] = 0;
-		if (solver.countSolutions(grid, 1, success) > 1)
+		if (!solver.testUniqueness(grid, limitHit))
 		{
 			grid[pos / 9][pos % 9] = previous;
 			break;

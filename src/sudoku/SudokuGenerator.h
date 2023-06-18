@@ -17,9 +17,13 @@ struct GridInfo
 class SudokuGenerator
 {
 public:
-	static GridInfo generateRandomUniqueGrid(SUDOKU_GRID& grid, bool& success);
+	static GridInfo generateRandomUniqueGrid(SUDOKU_GRID& grid);
+	static void scrambleSeedGrid(SUDOKU_GRID& grid);
 
 private:
-	static void makeRandomGrid(SUDOKU_GRID& grid, bool& success);
-	static void removePositionsFromGrid(SUDOKU_GRID& grid, bool& success);
+	static void reshuffleNumber(SUDOKU_GRID& grid);
+	static void rotate90(SUDOKU_GRID& grid);
+	static void flipAxis(SUDOKU_GRID& grid);
+	static void makeRandomGrid(SUDOKU_GRID& grid, bool& limitHit);
+	static void removePositionsFromGrid(SUDOKU_GRID& grid, bool& limitHit);
 };

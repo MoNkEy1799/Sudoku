@@ -4,48 +4,93 @@
 #include <array>
 #include <string>
 
-SudokuSolver::SudokuSolver()
-	: m_solutionCounter(0), m_backtrackCounter(0)
+SudokuSolver::SudokuSolver(uint64_t recursionLimit)
+	: m_backtrackCounter(0), m_backtrackLimit(recursionLimit)
 {
-}
-
-void SudokuSolver::solveAndPrint(SUDOKU_GRID grid, bool& success)
-{
-	m_backtrackCounter = 0;
-
-	if (solveSudoku(grid, 0, success))
+	if (recursionLimit == 0)
 	{
-		printGrid(grid);
+		m_backtrackLimit = ~0;
 	}
 }
 
-void SudokuSolver::solve(SUDOKU_GRID& grid, int solutionNumber, bool& success)
+void SudokuSolver::simpleSolve(SUDOKU_GRID& grid, bool& limitHit)
 {
 	m_backtrackCounter = 0;
-	solveSudoku(grid, solutionNumber, success);
+	limitHit = false;
+	solve(grid, limitHit);
 }
 
-int SudokuSolver::countSolutions(SUDOKU_GRID grid, int solutionNumber, bool& success)
+bool SudokuSolver::testUniqueness(SUDOKU_GRID grid, bool& limitHit)
 {
 	m_backtrackCounter = 0;
-	m_solutionCounter = 0;
-	solveSudoku(grid, solutionNumber, success);
-	return m_solutionCounter;
+	limitHit = false;
+	if (count(grid, 0, limitHit) > 1)
+	{
+		return false;
+	}
+	return true;
 }
 
 void SudokuSolver::printGrid(SUDOKU_GRID& grid)
 {
+	std::cout << "\n- - - - - - - - - - - - -\n";
 	for (int i = 0; i < 9; i++)
 	{
+		if (i == 3 || i == 6)
+		{
+			std::cout << "- - - - - - - - - - - - -\n";
+		}
+		std::cout << "| ";
 		for (int j = 0; j < 9; j++)
 		{
-			std::cout << grid[i][j] << "  ";
+			if (j == 3 || j == 6)
+			{
+				std::cout << "| ";
+			}
+			if (grid[i][j] == 0)
+			{
+				std::cout << ". ";
+			}
+			else
+			{
+				std::cout << grid[i][j] << " ";
+			}
 		}
-
-		std::cout << std::endl;
+		std::cout << "|\n";
 	}
+	std::cout << "- - - - - - - - - - - - -\n" << std::endl;
+}
 
-	std::cout << "\n" << "- - - - - - - - - - - - -" << "\n" << std::endl;
+std::string SudokuSolver::formatGrid(SUDOKU_GRID& grid)
+{
+	std::string temp;
+	temp += "\n- - - - - - - - - - - - -\n";
+	for (int i = 0; i < 9; i++)
+	{
+		if (i == 3 || i == 6)
+		{
+			temp += "- - - - - - - - - - - - -\n";
+		}
+		temp += "| ";
+		for (int j = 0; j < 9; j++)
+		{
+			if (j == 3 || j == 6)
+			{
+				temp += "| ";
+			}
+			if (grid[i][j] == 0)
+			{
+				temp += ". ";
+			}
+			else
+			{
+				temp += std::to_string(grid[i][j]) + " ";
+			}
+		}
+		temp += "|\n";
+	}
+	temp += "- - - - - - - - - - - - -\n";
+	return temp;
 }
 
 bool SudokuSolver::findEmptyLocation(SUDOKU_GRID& grid, int& row, int& col)
@@ -60,7 +105,6 @@ bool SudokuSolver::findEmptyLocation(SUDOKU_GRID& grid, int& row, int& col)
 			}
 		}
 	}
-
 	return false;
 }
 
@@ -73,7 +117,6 @@ bool SudokuSolver::usedInRow(SUDOKU_GRID& grid, int row, int num)
 			return true;
 		}
 	}
-
 	return false;
 }
 
@@ -86,7 +129,6 @@ bool SudokuSolver::usedInCol(SUDOKU_GRID& grid, int col, int num)
 			return true;
 		}
 	}
-
 	return false;
 }
 
@@ -102,7 +144,6 @@ bool SudokuSolver::usedInBox(SUDOKU_GRID& grid, int row, int col, int num)
 			}
 		}
 	}
-
 	return false;
 }
 
@@ -115,27 +156,19 @@ bool SudokuSolver::isLocationValid(SUDOKU_GRID& grid, int row, int col, int num)
 	return (!rowUnsafe && !colUnsafe && !boxUnsafe);
 }
 
-bool SudokuSolver::solveSudoku(SUDOKU_GRID& grid, int solutionNumber, bool& success)
+bool SudokuSolver::solve(SUDOKU_GRID& grid, bool& limitHit)
 {
 	m_backtrackCounter++;
-
-	if (m_backtrackCounter > 10000)
+	if (m_backtrackCounter > m_backtrackLimit)
 	{
-		success = false;
-		return true;
-	}
-
-	if (m_solutionCounter > solutionNumber)
-	{
+		limitHit = true;
 		return true;
 	}
 
 	int row, col;
-
 	if (!findEmptyLocation(grid, row, col))
 	{
-		m_solutionCounter++;
-		return false;
+		return true;
 	}
 
 	for (int num = 1; num < 10; num++)
@@ -143,15 +176,39 @@ bool SudokuSolver::solveSudoku(SUDOKU_GRID& grid, int solutionNumber, bool& succ
 		if (isLocationValid(grid, row, col, num))
 		{
 			grid[row][col] = num;
-
-			if (solveSudoku(grid, solutionNumber, success))
+			if (solve(grid, limitHit))
 			{
 				return true;
 			}
-
 			grid[row][col] = 0;
 		}
 	}
-
 	return false;
+}
+
+int SudokuSolver::count(SUDOKU_GRID& grid, int solutions, bool& limitHit)
+{
+	m_backtrackCounter++;
+	if (m_backtrackCounter > m_backtrackLimit)
+	{
+		limitHit = true;
+		return 2;
+	}
+
+	int row, col;
+	if (!findEmptyLocation(grid, row, col))
+	{
+		return solutions + 1;
+	}
+
+	for (int num = 1; num < 10 && solutions < 2; num++)
+	{
+		if (isLocationValid(grid, row, col, num))
+		{
+			grid[row][col] = num;
+			solutions = count(grid, solutions, limitHit);
+		}
+	}
+	grid[row][col] = 0;
+	return solutions;
 }
