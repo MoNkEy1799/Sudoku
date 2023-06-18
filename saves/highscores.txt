@@ -1,4 +1,4 @@
-#BEGINNER
+#EASY
 - 
 - 
 - 
@@ -10,7 +10,7 @@
 - 
 - 
 
-#INTERMEDIATE
+#MEDIUM
 - 
 - 
 - 
@@ -22,7 +22,19 @@
 - 
 - 
 
-#EXPERT
+#HARD
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+
+#EXTREME
 - 
 - 
 - 
@@ -35,7 +47,6 @@
 - 
 
 #STATS
-0 
 0 
 0 
 0 

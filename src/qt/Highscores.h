@@ -1,5 +1,4 @@
 #pragma once
-#include <cstdint>
 #include <string>
 #include <unordered_map>
 #include <array>
@@ -13,7 +12,7 @@ struct Score
 	int year = 0, month = 0, day = 0, hour = 0, minute = 0, second = 0;
 };
 
-enum Stats { GAMES, WON, LOST, TIME, LEFT, RIGHT };
+enum Stats { GAMES, WON, TIME, LEFT, RIGHT };
 
 class Highscores
 {
@@ -28,7 +27,7 @@ public:
 
 private:
 	std::unordered_map<Difficulty, std::array<Score, 10>> m_scoreData;
-	std::array<uint32_t, 6> m_stats;
+	std::array<uint32_t, 5> m_stats;
 	MainWindow* m_mainWindow;
 
 	void shiftData(Difficulty diff, int index);
