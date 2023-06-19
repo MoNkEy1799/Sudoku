@@ -1,5 +1,6 @@
 #include "Menu.h"
 #include "MainWindow.h"
+#include "Highscores.h"
 #include "../sudoku/SudokuGenerator.h"
 
 #include <QMenuBar>
@@ -10,6 +11,7 @@ Menu::Menu(MainWindow* main, QWidget* parent)
 	: QMenuBar(parent), m_mainWindow(main)
 {
 	m_settings = addMenu("Settings");
+	setMinimumWidth(2000);
 
 	QMenu* newGame = m_settings->addMenu("New Game");
 	QAction* easy = newGame->addAction("Easy");
@@ -27,12 +29,16 @@ Menu::Menu(MainWindow* main, QWidget* parent)
 	QAction* touchpad = mouseType->addAction("Touchpad");
 	connect(touchpad, &QAction::triggered, this, [this] { changeMouseType(false); });
 	
-	m_highscore = addMenu("Highscores");
-
-	QAction* debug = addAction("Debug");
-	connect(debug, &QAction::triggered, m_mainWindow, &MainWindow::debug);
-
-	setMinimumWidth(2000);
+	m_highscore = addAction("Highscores && Stats");
+	auto scoreTrig = [this]
+	{
+		if (m_mainWindow->highscore->scoreStatChanged)
+		{
+			m_mainWindow->makeHighscoreWidget();
+		}
+		m_mainWindow->showHighscore();
+	};
+	connect(m_highscore, &QAction::triggered, this, scoreTrig);
 }
 
 void Menu::changeMouseType(bool type)

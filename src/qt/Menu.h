@@ -17,7 +17,7 @@ public:
 
 private:
 	QMenu* m_settings;
-	QMenu* m_highscore;
+	QAction* m_highscore;
 	MainWindow* m_mainWindow;
 
 	void changeMouseType(bool type);

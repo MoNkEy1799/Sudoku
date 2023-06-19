@@ -35,13 +35,13 @@ WinOverlay::WinOverlay(MainWindow* main, QWidget* parent)
 	newGame->setFont(QFont("Sans-Serif", 12));
 	newGame->setMinimumHeight(24);
 	newGame->setObjectName("Win");
-	connect(newGame, &QPushButton::clicked, this, [this] { m_mainWindow->createNewBoard(Difficulty::HARD); });
+	connect(newGame, &QPushButton::clicked, this, [this] { m_mainWindow->createNewBoard(m_mainWindow->board->gridInfo.difficultly); });
 
 	QPushButton* highscore = new QPushButton("Highscores", this);
 	highscore->setFont(QFont("Sans-Serif", 12));
 	highscore->setMinimumHeight(24);
 	highscore->setObjectName("Win");
-	connect(highscore, &QPushButton::clicked, this, [this] { qDebug() << "click"; });
+	connect(highscore, &QPushButton::clicked, this, [this] { m_mainWindow->showHighscore(); });
 
 	QWidget* topSpacer = new QWidget(this);
 	topSpacer->setMinimumHeight(240);

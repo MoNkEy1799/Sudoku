@@ -18,15 +18,13 @@ public:
 	TimerWidget(int width, QWidget* parent = nullptr);
 
 	void startTimer();
-	void stopTimer();
+	int stopTimer();
 	void resetTimer();
-
+	void updateLabel(bool advanceTime = true);
 	std::string getTime();
 
 private:
 	QTimer* m_timer;
 	QLabel* m_timeLabel;
 	uint32_t m_totalSeconds;
-
-	void updateLabel();
 };

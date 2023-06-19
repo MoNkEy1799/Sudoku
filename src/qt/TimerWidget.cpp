@@ -12,6 +12,7 @@ TimerWidget::TimerWidget(int width, QWidget* parent)
     : QWidget(parent), m_totalSeconds(0), m_timer(nullptr)
 {
     m_timer = new QTimer(this);
+    connect(m_timer, &QTimer::timeout, this, [this] { updateLabel(); });
     m_timeLabel = new QLabel(this);
     m_timeLabel->setFont(QFont("Sans-Serif", 20, QFont::Bold));
     m_timeLabel->setFixedSize(160, 50);
@@ -23,7 +24,6 @@ TimerWidget::TimerWidget(int width, QWidget* parent)
     setMaximumWidth(width);
     QGridLayout* layout = new QGridLayout(this);
     layout->addWidget(m_timeLabel);
-    connect(m_timer, &QTimer::timeout, this, &TimerWidget::updateLabel);
 }
 
 void TimerWidget::startTimer()
@@ -32,9 +32,10 @@ void TimerWidget::startTimer()
     m_timer->start(1000);
 }
 
-void TimerWidget::stopTimer()
+int TimerWidget::stopTimer()
 {
     m_timer->stop();
+    return m_totalSeconds;
 }
 
 void TimerWidget::resetTimer()
@@ -58,8 +59,11 @@ std::string TimerWidget::getTime()
     return time;
 }
 
-void TimerWidget::updateLabel()
+void TimerWidget::updateLabel(bool advanceTime)
 {
     m_timeLabel->setText(getTime().c_str());
-    m_totalSeconds++;
+    if (advanceTime)
+    {
+        m_totalSeconds++;
+    }
 }

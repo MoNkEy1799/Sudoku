@@ -1,14 +1,21 @@
 #include "Highscores.h"
 #include "MainWindow.h"
 
+#include <Qtimer>
+
 #include <fstream>
 #include <string>
 #include <unordered_map>
 #include <array>
+#include <iostream>
 
 Highscores::Highscores(MainWindow* main)
+	: m_saveTimer(nullptr)
 {
     loadData();
+	m_saveTimer = new QTimer(main);
+	main->connect(m_saveTimer, &QTimer::timeout, main, [this] { saveData(); });
+	m_saveTimer->start(10000);
 }
 
 void Highscores::addScore(Difficulty diff, uint16_t seconds)
@@ -26,7 +33,7 @@ void Highscores::addScore(Difficulty diff, uint16_t seconds)
 			s.time = seconds;
 			m_scoreData[diff][i] = s;
 			saveData();
-			scoreChanged = true;
+			scoreStatChanged = true;
 			break;
 		}
 	}
@@ -39,7 +46,7 @@ void Highscores::addStat(Stats stat, uint32_t addCount, bool save)
 	{
 		saveData();
 	}
-	statChanged = true;
+	scoreStatChanged = true;
 }
 
 std::string Highscores::formattedScore(Difficulty diff, int placing, bool save)
@@ -113,6 +120,27 @@ std::string Highscores::formattedScore(Difficulty diff, int placing, bool save)
 
 std::string Highscores::getStat(Stats stat)
 {
+	if (stat == Stats::TIME)
+	{
+		std::string format;
+		std::ostringstream osh;
+		osh << std::setw(2) << std::setfill('0') << std::to_string(m_stats[stat] / 3600);
+		format += osh.str() + ":";
+
+		std::ostringstream osm;
+		osm << std::setw(2) << std::setfill('0') << std::to_string(m_stats[stat] / 60 % 60);
+		format += osm.str() + ":";
+
+		std::ostringstream oss;
+		oss << std::setw(2) << std::setfill('0') << std::to_string(m_stats[stat] % 60);
+		format += oss.str();
+		return format;
+	}
+	else if (stat == Stats::WHEEL)
+	{
+		std::string temp = std::to_string(m_stats[stat] / 1000.0f);
+		return temp.substr(0, temp.size() - 3) + " m";
+	}
 	return std::to_string(m_stats[(int)stat]);
 }
 
@@ -183,7 +211,7 @@ void Highscores::loadData()
 			m_scoreData[(Difficulty)diff][place] = score;
 		}
 	}
-	for (int stat = 0; stat < 5; stat++)
+	for (int stat = 0; stat < 6; stat++)
 	{
 		std::string temp;
 		filedata[0] >> temp;
@@ -222,7 +250,7 @@ void Highscores::saveData()
 		file << "\n";
 	}
 	file << "#STATS\n";
-	for (int stat = 0; stat < 5; stat++)
+	for (int stat = 0; stat < 6; stat++)
 	{
 		file << std::to_string(m_stats[stat]) + " \n";
 	}

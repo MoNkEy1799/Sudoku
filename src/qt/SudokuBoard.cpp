@@ -7,8 +7,6 @@
 #include <QLabel>
 
 #include <set>
-#include <thread>
-#include <atomic>
 
 SudokuBoard::SudokuBoard(Difficulty difficulty, QWidget* parent)
 	: QWidget(parent), currentGrid({ 0 })

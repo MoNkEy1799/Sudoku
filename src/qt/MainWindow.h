@@ -16,21 +16,24 @@ class TimerWidget;
 class Tile;
 class Menu;
 class WinOverlay;
+class Highscores;
 
 class MainWindow : public QMainWindow
 {
 public:
-	void debug();
 	MainWindow();
 
 	void setMouseType(bool mouseType);
 	void createNewBoard(Difficulty difficulty);
+	void makeHighscoreWidget();
+	void showHighscore();
 
-	SudokuBoard* board = nullptr;
-	NumberWidget* numbers = nullptr;
-	TimerWidget* timer = nullptr;
-	Menu* menu = nullptr;
-	WinOverlay* win = nullptr;
+	SudokuBoard* board;
+	NumberWidget* numbers;
+	TimerWidget* timer;
+	Menu* menu;
+	WinOverlay* win;
+	Highscores* highscore;
 
 private:
 	bool m_timerRunning;
@@ -39,6 +42,7 @@ private:
 	std::array<bool, 81> m_visitedTiles;
 	QGridLayout* m_layout;
 	QWidget* m_centralWidget;
+	QWidget* m_highscoreWidget;
 
 	bool eventFilter(QObject* object, QEvent* event) override;
 	void selectNumberButton(QPushButton* pressedButton = nullptr, int number = 0);
@@ -55,7 +59,6 @@ private:
 	void winGame();
 
 	int getSelectedNumber() { return m_currentNumber % (10 * m_scrollSpeed) / m_scrollSpeed; };
-
 	Tile* getTileUnderMouse(QMouseEvent* mouseEvent);
 };
 
@@ -81,6 +84,11 @@ private:
 		"QWidget#Win {background: " + trpCol + ";}"
 		"QPushButton#Win {background: #252525; color: " + txtCol + "; border: 1px solid " + txtCol + "; border-radius: 8;}"
 		"QPushButton#Win::hover {background: " + hvrCol + ";}"
+
+		"QLabel {background: " + bgCol + "; color: " + txtCol + "}"
+		"QTabBar::tab {background: " + "#303030" + "}"
+		"QTabBar::tab::selected {background: " + highCol + "}"
+		"QTabWidget::pane {background: " + bgCol + "}"
 
 		"QLabel#Time {background: " + bgCol + "; color: " + txtCol + "; border: 1px solid " + txtCol + "}"
 

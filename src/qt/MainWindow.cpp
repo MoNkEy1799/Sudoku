@@ -5,6 +5,7 @@
 #include "Tile.h"
 #include "Menu.h"
 #include "WinOverlay.h"
+#include "Highscores.h"
 #include "../sudoku/SudokuSolver.h"
 
 #include <QPushButton>
@@ -21,18 +22,18 @@
 #include <QApplication>
 #include <QIcon>
 #include <QGraphicsBlurEffect>
+#include <QTabWidget>
+#include <QTabBar>
 
 #include <string>
 #include <chrono>
-
-void MainWindow::debug()
-{
-	winGame();
-}
+#include <numbers>
+#include <cmath>
 
 MainWindow::MainWindow()
 	: QMainWindow(), m_currentNumber(WHEEL_START), m_direction(-1), m_scrollSpeed(1),
-	m_timerRunning(false), m_visitedTiles({ false })
+	board(nullptr), numbers(nullptr), timer(nullptr), menu(nullptr), win(nullptr), highscore(nullptr),
+	m_timerRunning(false), m_visitedTiles({ false }), m_highscoreWidget(nullptr)
 {
 	m_centralWidget = new QWidget(this);
 	m_layout = new QGridLayout(m_centralWidget);
@@ -40,6 +41,8 @@ MainWindow::MainWindow()
 	numbers = new NumberWidget(445, m_centralWidget);
 	timer = new TimerWidget(445, m_centralWidget);
 	menu = new Menu(this, m_centralWidget);
+	highscore = new Highscores(this);
+	makeHighscoreWidget();
 	setMenuBar(menu);
 	createNewBoard(Difficulty::EASY);
 
@@ -82,15 +85,14 @@ void MainWindow::createNewBoard(Difficulty difficulty)
 	{
 		delete board;
 	}
-
 	if (timer)
 	{
 		m_timerRunning = false;
-		timer->stopTimer();
+		int time = timer->stopTimer();
+		highscore->addStat(Stats::TIME, time, true);
 		timer->resetTimer();
 		timer->setGraphicsEffect(nullptr);
 	}
-
 	if (win)
 	{
 		delete win;
@@ -98,6 +100,7 @@ void MainWindow::createNewBoard(Difficulty difficulty)
 	}
 
 	board = new SudokuBoard(difficulty, m_centralWidget);
+	highscore->addStat(Stats::BOARDS, 1, true);
 	m_layout->addWidget(board, 1, 0);
 
 	for (Tile* tile : board->findChildren<Tile*>())
@@ -161,6 +164,86 @@ void MainWindow::selectNumberButton(QPushButton* pressedButton, int number)
 	}
 }
 
+void MainWindow::makeHighscoreWidget()
+{
+	if (m_highscoreWidget)
+	{
+		m_highscoreWidget->deleteLater();
+		highscore->scoreStatChanged = false;
+	}
+
+	m_highscoreWidget = new QWidget();
+	m_highscoreWidget->setMinimumSize(400, 400);
+	m_highscoreWidget->setWindowTitle("Highscores & Stats");
+	m_highscoreWidget->setWindowIcon(QIcon("resources/icon.png"));
+	m_highscoreWidget->setStyleSheet(MainStyleSheet().getStyleSheet());
+	QGridLayout* layout = new QGridLayout(m_highscoreWidget);
+
+	QTabWidget* tabWidget = new QTabWidget();
+	tabWidget->tabBar()->setExpanding(true);
+	tabWidget->tabBar()->setDocumentMode(true);
+	layout->addWidget(tabWidget);
+	std::array<std::string, 4> diffNames = { "EASY", "MEDIUM", "HARD", "EXTREME" };
+	for (int diff = 0; diff < 4; diff++)
+	{
+		QWidget* widget = new QWidget();
+		QGridLayout* tabLayout = new QGridLayout();
+		widget->setLayout(tabLayout);
+		tabWidget->addTab(widget, diffNames[diff].c_str());
+
+		for (int place = 0; place < 10; place++)
+		{
+			std::string score = highscore->formattedScore((Difficulty)(diff + 1), place, false);
+			QLabel* qlabel = new QLabel((std::to_string(place + 1) + ". " + score).c_str());
+			QLabel* line = new QLabel();
+			line->setObjectName("ThinLine");
+			line->setFixedHeight(1);
+			if (place < 5)
+			{
+				tabLayout->addWidget(qlabel, (place % 5) * 2, 0);
+				tabLayout->addWidget(line, (place % 5) * 2 + 1, 0);
+			}
+			else
+			{
+				tabLayout->addWidget(qlabel, (place % 5) * 2, 1);
+				tabLayout->addWidget(line, (place % 5) * 2 + 1, 1);
+			}
+		}
+	}
+	QWidget* statsWidget = new QWidget();
+	layout->addWidget(statsWidget);
+	QGridLayout* statsLayout = new QGridLayout();
+	statsWidget->setLayout(statsLayout);
+
+	QLabel* head = new QLabel("- RANDOM GAME STATS -");
+	QFont stdFont = QApplication::font();
+	stdFont.setBold(true);
+	stdFont.setPointSizeF(12);
+	head->setFont(stdFont);
+	statsLayout->addWidget(head, 0, 0, 1, 2, Qt::AlignCenter);
+	QLabel* game = new QLabel("Sudokus generated: ");
+	statsLayout->addWidget(game, 1, 0);
+	QLabel* won = new QLabel("Games won: ");
+	statsLayout->addWidget(won, 2, 0);
+	QLabel* time = new QLabel("Total time played: ");
+	statsLayout->addWidget(time, 3, 0);
+	QLabel* left = new QLabel("Numbers set: ");
+	statsLayout->addWidget(left, 4, 0);
+	QLabel* right = new QLabel("Guesses added: ");
+	statsLayout->addWidget(right, 5, 0);
+	QLabel* wheel = new QLabel("Distance scrolled: ");
+	statsLayout->addWidget(wheel, 6, 0);
+	for (int stat = 0; stat < 6; stat++)
+	{
+		statsLayout->addWidget(new QLabel(highscore->getStat((Stats)stat).c_str()), stat + 1, 1, Qt::AlignRight);
+	}
+}
+
+void MainWindow::showHighscore()
+{
+	m_highscoreWidget->show();
+}
+
 void MainWindow::processHold(QEvent* event)
 {
 	QMouseEvent* mouseEvent = static_cast<QMouseEvent*>(event);
@@ -183,6 +266,7 @@ void MainWindow::processHold(QEvent* event)
 	int id = tile->getId();
 	int selectedNumber = getSelectedNumber();
 	m_visitedTiles[id] = true;
+	highscore->addStat(Stats::GUESS, 1);
 
 	if (selectedNumber == 9)
 	{
@@ -237,7 +321,9 @@ void MainWindow::processRelease(QEvent* event)
 void MainWindow::processWheel(QEvent* event)
 {
 	QWheelEvent* wheelEvent = static_cast<QWheelEvent*>(event);
-	if (m_direction * wheelEvent->angleDelta().y() > 0)
+	float angle = wheelEvent->angleDelta().y() / 8.0f;
+	highscore->addStat(Stats::WHEEL, std::abs(angle / 360.0f * 2 * std::numbers::pi * 2.54f * 10.0f));
+	if (m_direction * angle > 0)
 	{
 		m_currentNumber--;
 	}
@@ -250,6 +336,7 @@ void MainWindow::processWheel(QEvent* event)
 
 void MainWindow::rightClick(Tile* tile)
 {
+	highscore->addStat(Stats::GUESS, 1);
 	int id = tile->getId();
 	int selectedNumber = getSelectedNumber();
 	m_visitedTiles[id] = true;
@@ -270,6 +357,7 @@ void MainWindow::rightClick(Tile* tile)
 
 void MainWindow::leftClick(Tile* tile)
 {
+	highscore->addStat(Stats::SET, 1);
 	int id = tile->getId();
 	int selectedNumber = getSelectedNumber();
 	if (selectedNumber == 9)
@@ -308,9 +396,14 @@ int MainWindow::countUnfilledTiles()
 
 void MainWindow::winGame()
 {
+	timer->updateLabel(false);
 	win = new WinOverlay(this, m_centralWidget);
 	m_layout->addWidget(win, 0, 0, 3, 1, Qt::AlignBottom);
-	timer->stopTimer();
+	int time = timer->stopTimer();
+	qDebug() << time;
+	highscore->addStat(Stats::TIME, time);
+	highscore->addStat(Stats::WON, 1);
+	highscore->addScore(board->gridInfo.difficultly, time);
 	timer->setGraphicsEffect(new QGraphicsBlurEffect(this));
 	board->setGraphicsEffect(new QGraphicsBlurEffect(this));
 	numbers->setGraphicsEffect(new QGraphicsBlurEffect(this));
