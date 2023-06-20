@@ -40,8 +40,27 @@
     <Image Include="resources\icon.png" />
   </ItemGroup>
   <ItemGroup>
+    <Text Include="resources\gendata\output.txt" />
+    <Text Include="resources\gendata\runs\run1.txt" />
+    <Text Include="resources\gendata\runs\run10.txt" />
+    <Text Include="resources\gendata\runs\run11.txt" />
+    <Text Include="resources\gendata\runs\run12.txt" />
+    <Text Include="resources\gendata\runs\run13.txt" />
+    <Text Include="resources\gendata\runs\run14.txt" />
+    <Text Include="resources\gendata\runs\run15.txt" />
+    <Text Include="resources\gendata\runs\run2.txt" />
+    <Text Include="resources\gendata\runs\run3.txt" />
+    <Text Include="resources\gendata\runs\run4.txt" />
+    <Text Include="resources\gendata\runs\run5.txt" />
+    <Text Include="resources\gendata\runs\run6.txt" />
+    <Text Include="resources\gendata\runs\run7.txt" />
+    <Text Include="resources\gendata\runs\run8.txt" />
+    <Text Include="resources\gendata\runs\run9.txt" />
     <Text Include="saves\highscores.txt" />
     <Text Include="saves\highscores_reset.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="resources\gendata\fileModifier.py" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{A8CAF95C-88CF-448E-BBAC-3186C0C1C801}</ProjectGuid>

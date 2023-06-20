@@ -38,6 +38,7 @@ private:
 
 	void createTiles();
 	void fillBoard();
+	void loadExtremeGrid(SUDOKU_GRID& grid, GridInfo info);
 };
 
 enum class LineStyle {HTHIN, VTHIN, HTHICK, VTHICK};

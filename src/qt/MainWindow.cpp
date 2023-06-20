@@ -38,10 +38,10 @@ MainWindow::MainWindow()
 	m_centralWidget = new QWidget(this);
 	m_layout = new QGridLayout(m_centralWidget);
 
-	numbers = new NumberWidget(445, m_centralWidget);
-	timer = new TimerWidget(445, m_centralWidget);
-	menu = new Menu(this, m_centralWidget);
 	highscore = new Highscores(this);
+	numbers = new NumberWidget(445, m_centralWidget);
+	timer = new TimerWidget(445, highscore, m_centralWidget);
+	menu = new Menu(this, m_centralWidget);
 	makeHighscoreWidget();
 	setMenuBar(menu);
 	createNewBoard(Difficulty::EASY);
@@ -241,6 +241,10 @@ void MainWindow::makeHighscoreWidget()
 
 void MainWindow::showHighscore()
 {
+	if (highscore->scoreStatChanged)
+	{
+		makeHighscoreWidget();
+	}
 	m_highscoreWidget->show();
 }
 
@@ -254,7 +258,7 @@ void MainWindow::processHold(QEvent* event)
 	}
 
 	Tile* tile = getTileUnderMouse(mouseEvent);
-	if (!tile || tile->getState() == TileState::FIXED)
+	if (!tile || tile->getState() == TileState::FIXED || tile->getState() == TileState::SET)
 	{
 		return;
 	}
@@ -400,7 +404,6 @@ void MainWindow::winGame()
 	win = new WinOverlay(this, m_centralWidget);
 	m_layout->addWidget(win, 0, 0, 3, 1, Qt::AlignBottom);
 	int time = timer->stopTimer();
-	qDebug() << time;
 	highscore->addStat(Stats::TIME, time);
 	highscore->addStat(Stats::WON, 1);
 	highscore->addScore(board->gridInfo.difficultly, time);

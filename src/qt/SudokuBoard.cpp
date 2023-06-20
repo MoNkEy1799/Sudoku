@@ -1,5 +1,7 @@
 #include "SudokuBoard.h"
 #include "Tile.h"
+#include "../sudoku/Random.h"
+#include "../sudoku/SudokuSolver.h"
 #include "../sudoku/SudokuGenerator.h"
 
 #include <QWidget>
@@ -7,6 +9,9 @@
 #include <QLabel>
 
 #include <set>
+#include <fstream>
+#include <limits>
+#include <iostream>
 
 SudokuBoard::SudokuBoard(Difficulty difficulty, QWidget* parent)
 	: QWidget(parent), currentGrid({ 0 })
@@ -16,13 +21,20 @@ SudokuBoard::SudokuBoard(Difficulty difficulty, QWidget* parent)
 	m_layout->setSpacing(0);
 	m_layout->setAlignment(Qt::AlignCenter);
 
-	Difficulty currentDifficulty = Difficulty::NONE;
-	while (currentDifficulty != difficulty)
+	if (difficulty == Difficulty::EXTREME)
 	{
-		gridInfo = SudokuGenerator::generateRandomUniqueGrid(currentGrid);
-		currentDifficulty = gridInfo.difficultly;
+		loadExtremeGrid(currentGrid, gridInfo);
+		SudokuGenerator::scrambleSeedGrid(currentGrid);
 	}
-	
+	else
+	{
+		Difficulty currentDifficulty = Difficulty::NONE;
+		while (currentDifficulty != difficulty)
+		{
+			gridInfo = SudokuGenerator::generateRandomUniqueGrid(currentGrid);
+			currentDifficulty = gridInfo.difficultly;
+		}
+	}
 	createTiles();
 	fillBoard();
 }
@@ -113,6 +125,32 @@ void SudokuBoard::fillBoard()
 				FillLine* line = new FillLine(this, LineStyle::HTHIN);
 				m_layout->addWidget(line, i, j, Qt::AlignCenter);
 			}
+		}
+	}
+}
+
+void SudokuBoard::loadExtremeGrid(SUDOKU_GRID& grid, GridInfo info)
+{
+	std::ifstream file;
+	file.open("resources/gendata/output.txt");
+	Random random;
+	int puzzle = random.randInt(1, 699) - 1;
+	for (int i = 0; i < puzzle * 11; i++)
+	{
+		file.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+	}
+
+	std::string temp;
+	file >> temp;
+	info.openTiles = std::stoi(temp);
+	info.difficultly = Difficulty::EXTREME;
+	for (int i = 0; i < 9; i++)
+	{
+		temp = "";
+		file >> temp;
+		for (int j = 0; j < 9; j++)
+		{
+			grid[i][j] = (int)(temp[j] - '0');
 		}
 	}
 }

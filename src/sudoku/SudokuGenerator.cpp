@@ -93,6 +93,36 @@ void SudokuGenerator::rotate90(SUDOKU_GRID& grid)
 
 void SudokuGenerator::flipAxis(SUDOKU_GRID& grid)
 {
+	Random random;
+	SUDOKU_GRID temp;
+	int axes = random.randInt(0, 3);
+	if (!axes)
+	{
+		return;
+	}
+	if (axes == 1 or axes == 3)
+	{
+		for (int row = 0; row < 4; row++)
+		{
+			temp[row] = grid[8 - row];
+			temp[8 - row] = grid[row];
+		}
+		temp[4] = grid[4];
+		grid = temp;
+	}
+	if (axes == 2 or axes == 3)
+	{
+		for (int row = 0; row < 9; row++)
+		{
+			for (int col = 0; col < 4; col++)
+			{
+				temp[row][col] = grid[row][8 - col];
+				temp[row][8 - col] = grid[row][col];
+			}
+			temp[row][4] = grid[row][4];
+		}
+		grid = temp;
+	}
 }
 
 void SudokuGenerator::makeRandomGrid(SUDOKU_GRID& grid, bool& limitHit)

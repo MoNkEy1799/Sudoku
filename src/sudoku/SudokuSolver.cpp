@@ -33,32 +33,7 @@ bool SudokuSolver::testUniqueness(SUDOKU_GRID grid, bool& limitHit)
 
 void SudokuSolver::printGrid(SUDOKU_GRID& grid)
 {
-	std::cout << "\n- - - - - - - - - - - - -\n";
-	for (int i = 0; i < 9; i++)
-	{
-		if (i == 3 || i == 6)
-		{
-			std::cout << "- - - - - - - - - - - - -\n";
-		}
-		std::cout << "| ";
-		for (int j = 0; j < 9; j++)
-		{
-			if (j == 3 || j == 6)
-			{
-				std::cout << "| ";
-			}
-			if (grid[i][j] == 0)
-			{
-				std::cout << ". ";
-			}
-			else
-			{
-				std::cout << grid[i][j] << " ";
-			}
-		}
-		std::cout << "|\n";
-	}
-	std::cout << "- - - - - - - - - - - - -\n" << std::endl;
+	std::cout << formatGrid(grid) << std::endl;
 }
 
 std::string SudokuSolver::formatGrid(SUDOKU_GRID& grid)

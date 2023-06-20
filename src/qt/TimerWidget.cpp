@@ -1,4 +1,5 @@
 #include "TimerWidget.h"
+#include "Highscores.h"
 
 #include <QWidget>
 #include <QLabel>
@@ -8,8 +9,8 @@
 
 #include <string>
 
-TimerWidget::TimerWidget(int width, QWidget* parent)
-    : QWidget(parent), m_totalSeconds(0), m_timer(nullptr)
+TimerWidget::TimerWidget(int width, Highscores* highscore, QWidget* parent)
+    : QWidget(parent), m_totalSeconds(0), m_timer(nullptr), m_highscore(highscore)
 {
     m_timer = new QTimer(this);
     connect(m_timer, &QTimer::timeout, this, [this] { updateLabel(); });
@@ -65,5 +66,6 @@ void TimerWidget::updateLabel(bool advanceTime)
     if (advanceTime)
     {
         m_totalSeconds++;
+        m_highscore->addStat(Stats::TIME, 1);
     }
 }

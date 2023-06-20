@@ -30,15 +30,7 @@ Menu::Menu(MainWindow* main, QWidget* parent)
 	connect(touchpad, &QAction::triggered, this, [this] { changeMouseType(false); });
 	
 	m_highscore = addAction("Highscores && Stats");
-	auto scoreTrig = [this]
-	{
-		if (m_mainWindow->highscore->scoreStatChanged)
-		{
-			m_mainWindow->makeHighscoreWidget();
-		}
-		m_mainWindow->showHighscore();
-	};
-	connect(m_highscore, &QAction::triggered, this, scoreTrig);
+	connect(m_highscore, &QAction::triggered, this, [this] { m_mainWindow->showHighscore(); });
 }
 
 void Menu::changeMouseType(bool type)
