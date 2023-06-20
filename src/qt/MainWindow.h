@@ -98,6 +98,7 @@ private:
 		"QPushButton#Number {border: 2px solid " + bdrCol + "; color: " + txtCol + "; border-radius: 20;}"
 		"QPushButton#Number::hover {background: " + hvrCol + "; color: " + bgCol + ";}"
 		"QPushButton#Number::checked {background: " + txtCol + "; color: " + bgCol + ";}"
+		"QLabel#Indic {color: " + highCol + "; background: transparent; }"
 
 		"QPushButton#TileOpen {background: " + bgCol + "; color: " + txtCol + "; border-radius: 20;}"
 		"QPushButton#TileOpen::hover {background: " + hvrCol + "; color: " + txtCol + ";}"

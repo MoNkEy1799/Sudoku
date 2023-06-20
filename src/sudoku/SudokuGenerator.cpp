@@ -28,21 +28,21 @@ GridInfo SudokuGenerator::generateRandomUniqueGrid(SUDOKU_GRID& grid)
 			counter++;
 		}
 	}
-	if (counter <= 22)
+	if (counter <= 10)
+	{
+		return GridInfo{ Difficulty::NONE, 0 };
+	}
+	if (counter <= 25)
 	{
 		return GridInfo{ Difficulty::EASY, counter };
 	}
-	else if (counter <= 40)
+	else if (counter <= 43)
 	{
 		return GridInfo{ Difficulty::MEDIUM, counter };
 	}
-	else if (counter <= 55)
-	{
-		return GridInfo{ Difficulty::HARD, counter };
-	}
 	else
 	{
-		return GridInfo{ Difficulty::EXTREME, counter };
+		return GridInfo{ Difficulty::HARD, counter };
 	}
 }
 

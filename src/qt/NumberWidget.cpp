@@ -5,6 +5,7 @@
 #include <QWidget>
 #include <QFont>
 #include <QButtonGroup>
+#include <QLabel>
 
 #include <string>
 
@@ -19,6 +20,10 @@ NumberWidget::NumberWidget(int width, QWidget* parent)
 	for (int i = 0; i < 10; i++)
 	{
 		QPushButton* button = new QPushButton(std::to_string(i + 1).c_str(), this);
+		QLabel* label = new QLabel("1", button);
+		label->setObjectName("Indic");
+		label->setFont(QFont("Sans-Serif", 7, QFont::Bold));
+		label->move(23, 34);
 		m_numbers[i] = button;
 		button->setFont(QFont("Sans-Serif", 16, QFont::Bold));
 		button->setFixedSize(50, 50);
@@ -37,6 +42,7 @@ NumberWidget::NumberWidget(int width, QWidget* parent)
 		else
 		{
 			button->setText("X");
+			label->deleteLater();
 			m_layout->addWidget(button, 1, 4);
 		}
 	}
