@@ -58,7 +58,7 @@ private:
 	int countUnfilledTiles();
 	void winGame();
 
-	int getSelectedNumber() { return m_currentNumber % (10 * m_scrollSpeed) / m_scrollSpeed; };
+	int getSelectedNumber();
 	Tile* getTileUnderMouse(QMouseEvent* mouseEvent);
 };
 
@@ -99,6 +99,7 @@ private:
 		"QPushButton#Number::hover {background: " + hvrCol + "; color: " + bgCol + ";}"
 		"QPushButton#Number::checked {background: " + txtCol + "; color: " + bgCol + ";}"
 		"QLabel#Indic {color: " + highCol + "; background: transparent; }"
+		"QLabel#IndicHigh {color: " + bgCol + "; background: transparent;}"
 
 		"QPushButton#TileOpen {background: " + bgCol + "; color: " + txtCol + "; border-radius: 20;}"
 		"QPushButton#TileOpen::hover {background: " + hvrCol + "; color: " + txtCol + ";}"
