@@ -349,7 +349,7 @@ void MainWindow::rightClick(Tile* tile)
 
 	if (tile->getState() == TileState::SET)
 	{
-		numbers->changeRemaining(selectedNumber + 1, true);
+		numbers->changeRemaining(tile->getButton()->text().toInt(), true);
 	}
 
 	if (selectedNumber == 9)
@@ -373,7 +373,7 @@ void MainWindow::leftClick(Tile* tile)
 	int selectedNumber = getSelectedNumber();
 	if (selectedNumber == 9)
 	{
-		numbers->changeRemaining(selectedNumber + 1, true);
+		numbers->changeRemaining(tile->getButton()->text().toInt(), true);
 		tile->removeAllGuesses();
 		tile->removeHighlight();
 		board->currentGrid[id / 9][id % 9] = 0;

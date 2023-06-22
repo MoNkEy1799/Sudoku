@@ -9,6 +9,7 @@
 #include <QLabel>
 
 #include <string>
+#include <iostream>
 
 NumberWidget::NumberWidget(int width, QWidget* parent)
 	: QWidget(parent), m_numbers({ nullptr }), m_indicators({ nullptr }), m_remaining({ 9 })
@@ -27,11 +28,11 @@ NumberWidget::NumberWidget(int width, QWidget* parent)
 		button->setCheckable(true);
 		group->addButton(button);
 		m_numbers[i] = button;
-		QLabel* indic = new QLabel("I", button);
+		QLabel* indic = new QLabel("", button);
 		indic->setObjectName("Indic");
 		indic->setFont(QFont("Sans-Serif", 7, QFont::Bold));
 		indic->move(23, 34);
-		QLabel* indicHigh = new QLabel("H", button);
+		QLabel* indicHigh = new QLabel("", button);
 		indicHigh->setObjectName("IndicHigh");
 		indicHigh->setFont(QFont("Sans-Serif", 7, QFont::Bold));
 		indicHigh->move(23, 34);
@@ -62,11 +63,7 @@ NumberWidget::NumberWidget(int width, QWidget* parent)
 void NumberWidget::setNumber(int index)
 {
 	m_numbers[index]->setChecked(true);
-	for (int i = 0; i < 9; i++)
-	{
-		m_indicators[2 * i]->show();
-		m_indicators[2 * i + 1]->hide();
-	}
+	updateLabels();
 	if (index < 9)
 	{
 		m_indicators[2 * index]->hide();
@@ -76,7 +73,7 @@ void NumberWidget::setNumber(int index)
 
 void NumberWidget::initRemaining(SUDOKU_GRID& grid)
 {
-	m_remaining = { 9 };
+	m_remaining.fill(9);
 	for (int i = 0; i < 9; i++)
 	{
 		for (int j = 0; j < 9; j++)
@@ -89,6 +86,12 @@ void NumberWidget::initRemaining(SUDOKU_GRID& grid)
 	}
 	for (int i = 0; i < 9; i++)
 	{
+		if (m_remaining[i] <= 0)
+		{
+			m_indicators[2 * i]->setText("");
+			m_indicators[2 * i + 1]->setText("");
+			continue;
+		}
 		m_indicators[2 * i]->setText(std::to_string(m_remaining[i]).c_str());
 		m_indicators[2 * i + 1]->setText(std::to_string(m_remaining[i]).c_str());
 	}
@@ -110,4 +113,29 @@ void NumberWidget::changeRemaining(int number, bool increase)
 	}
 	m_indicators[2 * (number - 1)]->setText(std::to_string(m_remaining[number - 1]).c_str());
 	m_indicators[2 * (number - 1) + 1]->setText(std::to_string(m_remaining[number - 1]).c_str());
+	updateLabels(number - 1);
+}
+
+void NumberWidget::updateLabels(int index)
+{
+	int start = index;
+	int stop = index + 1;
+	if (index == -1)
+	{
+		start = 0;
+		stop = 9;
+	}
+	for (int i = start; i < stop; i++)
+	{
+		if (m_numbers[i]->isChecked())
+		{
+			m_indicators[2 * i]->hide();
+			m_indicators[2 * i + 1]->show();
+		}
+		else
+		{
+			m_indicators[2 * i]->show();
+			m_indicators[2 * i + 1]->hide();
+		}
+	}
 }

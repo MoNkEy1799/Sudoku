@@ -18,6 +18,7 @@ public:
 	void setNumber(int index);
 	void initRemaining(SUDOKU_GRID& grid);
 	void changeRemaining(int number, bool increase);
+	void updateLabels(int index = -1);
 
 private:
 	std::array<QPushButton*, 10> m_numbers;
