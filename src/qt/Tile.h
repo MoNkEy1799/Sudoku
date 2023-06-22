@@ -30,6 +30,7 @@ public:
 
 	int getId() { return m_id; };
 	TileState getState() { return m_state; };
+	void setState(TileState state) { m_state = state; };
 	QPushButton* getButton() { return m_innerCircle; };
 	QPushButton* getButtonHighlight() { return m_innerCircleHighlight; };
 	

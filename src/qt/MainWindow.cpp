@@ -110,7 +110,6 @@ void MainWindow::createNewBoard(Difficulty difficulty)
 	}
 
 	selectNumberButton(nullptr, 1);
-	numbers->setNumber(0);
 	numbers->setGraphicsEffect(nullptr);
 	numbers->initRemaining(board->currentGrid);
 }
@@ -162,8 +161,8 @@ void MainWindow::selectNumberButton(QPushButton* pressedButton, int number)
 			board->highlightTiles(number);
 		}
 		m_currentNumber = WHEEL_START + (number - 1) * m_scrollSpeed;
+		numbers->setNumber(number - 1);
 	}
-	numbers->setNumber(number - 1);
 }
 
 void MainWindow::makeHighscoreWidget()
@@ -354,6 +353,7 @@ void MainWindow::rightClick(Tile* tile)
 
 	if (selectedNumber == 9)
 	{
+		tile->setState(TileState::GUESS);
 		tile->removeAllGuesses();
 		tile->removeHighlight();
 		board->currentGrid[id / 9][id % 9] = 0;
@@ -373,7 +373,11 @@ void MainWindow::leftClick(Tile* tile)
 	int selectedNumber = getSelectedNumber();
 	if (selectedNumber == 9)
 	{
-		numbers->changeRemaining(tile->getButton()->text().toInt(), true);
+		if (tile->getState() == TileState::SET)
+		{
+			numbers->changeRemaining(tile->getButton()->text().toInt(), true);
+		}
+		tile->setState(TileState::GUESS);
 		tile->removeAllGuesses();
 		tile->removeHighlight();
 		board->currentGrid[id / 9][id % 9] = 0;

@@ -28,15 +28,14 @@ NumberWidget::NumberWidget(int width, QWidget* parent)
 		button->setCheckable(true);
 		group->addButton(button);
 		m_numbers[i] = button;
-		QLabel* indic = new QLabel("", button);
-		indic->setObjectName("Indic");
-		indic->setFont(QFont("Sans-Serif", 7, QFont::Bold));
-		indic->move(23, 34);
 		QLabel* indicHigh = new QLabel("", button);
 		indicHigh->setObjectName("IndicHigh");
 		indicHigh->setFont(QFont("Sans-Serif", 7, QFont::Bold));
 		indicHigh->move(23, 34);
-		indicHigh->hide();
+		QLabel* indic = new QLabel("", button);
+		indic->setObjectName("Indic");
+		indic->setFont(QFont("Sans-Serif", 7, QFont::Bold));
+		indic->move(23, 34);
 
 		if (i < 5)
 		{
@@ -66,8 +65,7 @@ void NumberWidget::setNumber(int index)
 	updateLabels();
 	if (index < 9)
 	{
-		m_indicators[2 * index]->hide();
-		m_indicators[2 * index + 1]->show();
+		m_indicators[2 * index + 1]->raise();
 	}
 }
 
@@ -113,29 +111,20 @@ void NumberWidget::changeRemaining(int number, bool increase)
 	}
 	m_indicators[2 * (number - 1)]->setText(std::to_string(m_remaining[number - 1]).c_str());
 	m_indicators[2 * (number - 1) + 1]->setText(std::to_string(m_remaining[number - 1]).c_str());
-	updateLabels(number - 1);
+	updateLabels();
 }
 
-void NumberWidget::updateLabels(int index)
+void NumberWidget::updateLabels()
 {
-	int start = index;
-	int stop = index + 1;
-	if (index == -1)
-	{
-		start = 0;
-		stop = 9;
-	}
-	for (int i = start; i < stop; i++)
+	for (int i = 0; i < 9; i++)
 	{
 		if (m_numbers[i]->isChecked())
 		{
-			m_indicators[2 * i]->hide();
-			m_indicators[2 * i + 1]->show();
+			m_indicators[2 * i + 1]->raise();
 		}
 		else
 		{
-			m_indicators[2 * i]->show();
-			m_indicators[2 * i + 1]->hide();
+			m_indicators[2 * i]->raise();
 		}
 	}
 }
